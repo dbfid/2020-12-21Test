@@ -37,4 +37,23 @@ class MainActivity : AppCompatActivity() {
     // 이제 Shape 클래스를 상속받아 Rect, Circle 클래스를 정의한다.
 
     //소스_하위 클래스
+    class Rect: Shape() {
+        var width: Int = 0
+            set(value){
+                if(value < 0) field = 0
+                else field = value
+            }
+        var height: Int = 0
+            set(value){
+                if(value < 0) field = 0
+                else field = value
+            }
+    }
+    class Circle: Shape(){
+        var r: Int = 0
+            set(value){
+                if(value < 0) field = 0
+                else field = value
+            }
+    }
 }

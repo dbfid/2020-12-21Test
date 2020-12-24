@@ -411,3 +411,71 @@ fun main6(args: Array<String>){
     smartCast2(MyClass1())
     smartCast2(MyClass2())
 }
+
+//소스 _ 외부 파일에서의 접근
+
+// 같은 패키지에 있는 다른 파일에서 접근하려는 테스트
+
+//소스_프로퍼티 getter/setter
+private var data: Int = 10
+    get() = field
+    set(value){
+        field = value
+    }
+
+//프로퍼티의 get() 함수는 값을 가져오고 set() 함수는 값을 변경하는 목적으로 사용합니다.
+
+// 이러한 특성을 이용해 목적에 따라 접근 제한을 다르게 설정 가능
+
+// 다음 소스는 앞서 보았던 PropertyVisibilityTest 클래스에서 set()/get() 함수의 접근 제한자를 변형한 것
+
+//소스 _ set()/get() 을 이용한 접근제한
+
+class PropertyVisibilityTest2{ //여기에 data라는 이름의 프로퍼티를 선언
+    // 프로퍼티에 별도의 접근 제한자를 명시하지 않고
+    var data: Int = 10
+        private set(value){
+            field = value
+        }
+
+    fun main(args: Array<String>){
+        val obj2 = PropertyVisibilityTest2()
+        println("${obj2.data}")
+        obj2.data =20 // <---에러가 난다.
+    }
+}
+
+// 프로퍼티의 get(), set()을 직접 작성해 접근 제한자를 다르게 설정할 때 다음의 규칙에 따라야 한다.
+
+// get() 함수의 접근 제한자는 프로퍼티의 접근 제한자의 항상 같다.
+// get() 함수의 접근 제한자는 프로퍼티의 접근 제한자의 다르게 설정할 수 있지만 접근 범위를 넓혀서 설정할 수는 없다.
+
+// 만약 프로퍼티가 protected val data: Int = 10 으로 선언했다면 get() 함수의 접근 제한자를 protected가 아닌 public, private 등으로 설정할 수 없다. 반면에 set() 함수는 프로퍼티의 접근 제한자가 private일 때 public으로 설정할 수 없습니다.
+// public 프로퍼티 -> set(): public, prtected, internal, private
+// protected 프로퍼티 -> set(): rpotected, private
+// internal 프로퍼티 -> set(); Internal, private
+// private 프로퍼티 -> set(): private
+
+// 생성자와 접근 제한자
+
+// 코틀린의 생성자는 주 생성자와 보조 생성자로 구분되며 주 생성자와 보조 생성자 모두 접근 제한자를 지정할 수 있다.
+
+// 상속 관계와 접근 제한자
+
+// 클래스를 정의할 때 상속 관계에 의한 접근 제한자 지정에 두 가지 규칙이 있다.
+
+// open과 private는 함께 사용할 수 없다.
+// 하위 클래스에서 상위 멤버를 오버라이트할 때 접근 범위를 줄일 수 없다.
+
+// 우선 첫 번째 규칙을 보면 open은 하위 클래스에서 오버라이드를 허용하는 예약어다.
+
+// 그런데 private로 선언한 함수와 프로퍼티는 해당 클래스 내에서만 접근 가능
+
+// 오버라이드는 허용하는데 접근할 수 없다는 건 이치에 맞지 않다. 따라서 open으로 선언한 함수와 프로퍼티에 private접근 제한자를 지정할 수 없습니다.
+
+// 코틀린에서 상속은 자바와 다른 부분이 있다.
+
+// 코틀린의 기본 상위 클래스는 Object가 아니라 Any이다.
+
+// 상속 관계 선언 시 extends 예약어를 사용하지 않고 콜론(:)을 이용해 타입 표현으로 상속 관계를 표현한다.
+

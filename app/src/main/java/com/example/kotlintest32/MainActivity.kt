@@ -173,7 +173,7 @@ class MainActivity : AppCompatActivity() {
         open val name: String = "kkang"// Super 클래스 안에 open 형식의 프로퍼티를 선언
     }
     open class Sub: Super(){ // 이 클래스를 상속받아 Sub라는 클래스를 정의
-        final override var name: String = "kim" // Sub 클래스에서 같은 이름으로 프로퍼티를 다시 정의
+        open override var name: String = "kim" // Sub 클래스에서 같은 이름으로 프로퍼티를 다시 정의
     }
     //함수의 오버라이드와 마찬가지로 프로퍼티의 오버라이드도 먼저 상위 클래스의 프로퍼티의 open 예약어로 명시해 재정의를 허용해야 합니다. 그리고 하위 클래스에서는 override 예약어로 명시해 재정의를 허용해야 합니다.
     // 그리고 하위 클래스에서는 override 예약어로 이 프로퍼티는 상위 클래스의 프로퍼티를 재정의한 것이라고 명시해야 함
@@ -210,4 +210,204 @@ class MainActivity : AppCompatActivity() {
     // 즉, override가 명시된 프로퍼티는 open을 추가하지 않아도 하위에서 재정의할 수 있도록 허용
 
     //소스_override
+
+    open class Super4{
+        open val name: String = "kkang"
+    }
+    open class Sub2: Super() {
+        override var name: String = "kim"
+    }
+    class Sub3: Sub(){
+        override var name: String = "lee"
+    }
+
+    //Super 클래스의 name 프로퍼티를 Sub 클래스에서 재정의하려고 05번 줄처럼 override 예약어를 명시했다.
+
+    //만약 상위 클래스의 프로퍼티를 재정의하면서 하위에서는 재정의하지 못하도록 막고 싶으면 final을 명시
+
+    //소스_프로퍼티 오버라이드 금지
+    /*open class Sub4: Super(){
+        final override var name: String = "kim"
+    }
+    class Sub5: Sub4(){
+        override var name: String ="lee" <--- 여기는 에러가 난다
+    }
+    */
+    // 상위 클래스 멤버 접근
+    // 함수의 프로퍼티 오버라이드까지 정의
+    // 오버라이드는 상위 클래스에 선언된 멤버를 하위 클래스에서 재정의해서 이용하는 기법
+
+    // 이렇게 하면 하위 클래스에서는 재정의한 멤버를 이용함
+    // 그런데 재정의한 멤버가 있어도 때로는 상위 클래스에 정의한 멤버도 함께 이용해야 할 때가 있다.
+
+    // 이럴 때 super를 사용한다.
+
+    //소스_super에 의한 상위 클래스 멤버 접근
+}
+open class Super {
+    open var x: Int = 10
+    open fun someFun(){
+        println("Suer...someFun()")
+    }
+}
+
+class Sub : Super(){
+    override var x: Int = 20
+    override fun someFun(){
+        super.someFun()
+        println("Sub8...${super.x}.... $x")
+    }
+}
+fun main(args: Array<String>){
+    var sub = Sub()
+    sub.someFun()
+}
+
+// 상위 멤버를 하위에 재정의해서 사용하면 되는 것이지, 다시 상위 멤버를 super로 이용할 필요가 있는가?
+
+//일반적으로 상위 클래스의 원본 함수에서는 여러 클래스에서 공통으로 처리할 로직을 작성하고, 하위 클래스의 오버라이드 함수에서는 해당 클래스만의 특정직언 로직을 작성. 그런데 하위 클래스에서 사우이 클래스의 공통 로직을 사용해야 하는 사례는 많다.
+
+// 앞에서 예로든 Shape와 React. Circle 클래스에서 Shape 클래스의 print() 함수에서는 공통적인 속성을 출력
+
+//상속과 생성자
+
+// 상위 클래스 생성자 호출
+
+//생성자는 클래스의 중요한 구성요소
+
+//모든 클래스에는 생성자가 최소 하나 이상 선언되어 있어야 하고고
+
+//소스 _ 클래스 상속 정의
+
+open class Super9{
+
+}
+
+class Sub10: Super(){
+
+}
+
+val sub = Sub()
+
+// 클래스를 선언할 때 개발자가 생성자를 추가하지 않으면 컴파일러가 매개변수 없는 주 생성자를 자동으로 추가합니다. 위의 그림에서 개발자가 왼쪽처럼 작성했더라고 컴파일러에 의한 생성자 자동 생성으로 오른쪽 코드처럼 작성한 것과 같습니다. 객체를 생성할 때 Sub 클래스의 생성자가 호출되며 Sub 클래스의 생성자에서 다시 상위 클래스의 생성자를 호출하는 구조입니다.
+
+// 상위 클래스에 명시적으로 생성자가 선언된 경우
+
+//소스 _생성자 연결 에러
+
+open class Super10(name: String){
+
+}
+
+class Sub11: Super(){ // --- 에러 책에는 에러라고 뜨는데 여기선 딱히 뜨지 않는다.
+
+}
+
+//위의 소스를 보면 Super 클래스에 문자열 하나를 매개변수로 받는 주 생성자를 정의했습니다. 그리고 04번 줄에서 Super를 상속받아 Sub 클래스를 정의했다. 그런데 위의 소스처럼 작성하면 04번 줄에서 컴파일 에러 발생
+
+// 소스_상위 클래스 생성자 연결
+
+//어떠한 형태로든 하위 클래스 생성자에는 상위 클래스의 생성자를 매개변수 정보에 맞게 호출하는 구문이 있어야 한다.
+//상위 클래스의 생성자를 매개변수 정보에 맞게 호출하는 구문이 있어야 한다. 이 원칙을 두 가지 경우로 정리해 볼 수 있을 것 같다.
+
+//하나는  하위 클래스에 주생성자가 선언된 경우이고. 다른 하나는 주 생성자 없이 보조 생성자만 선언된 경우
+
+//하위 클래스에 보조 생성자만 선언된 경우
+
+// 상하위 생성자의 수행 흐름
+
+//클래스를 상속 관계로 정의할 때 생성자가 연결되어
+// 상위 클래스의 생성자가 호출되는데, 이때 생성자의 수행 순서를 고려해야 합니다. 또한 상하위 클래스에 init 블록이 작성되어 있다면 init 블록의 수행 순서도 고려해야 합니다. 상속 관계에 있는 클래스의 생성자들이 어떤 순서로 실행되는지를 정리해보자
+
+open class Super11{
+    constructor(name: String, no:Int){
+        println("Super ... constructor(name, no)")
+    }
+    init{
+        println("Super ... init call....")
+    }
+}
+class Sub13(name: String): Super11(name, 10){
+    constructor(name: String, no: Int): this(name){
+        println("sub ... constructor(name, no) call")
+    }
+    init{
+        println("sub ... init call....")
+    }
+}
+
+fun main3(args: Array<String>){
+
+    Sub13("kkang")
+    println("..........")
+    Sub13("kkang", 10)
+}
+
+// 생성자의 흐름을 쉽게 파악하려면 생성자가 하는 역할을 수행 흐름 관점에서 살펴보면 된다.
+
+// 생성자가 호출되면 다음 순서로 실행된다.
+
+// this() 혹은 super()에 의한 다른 생성자 호출
+// init 블록 호출
+// 생성자의()영역 실행
+//객체가 생성되면 Sub의 A생성자가 호출된다.
+
+// C 생성자의 2번. Syper의 init 블록을 실행한다.
+
+// 상속과 캐스팅
+
+// 캐스팅이란 형 변환을 의미. Int 타입의 객체가 Double 타입으로. 또는 Double 타입의 객체가 Int 타입으로 변환되는 것을 의미 기초 데이터 타입의 캐스팅은 이전에 살펴보았듯이
+
+//자동 형 변환이 안 되고 함수를 이용해야 함
+
+//소스_기초 타입 변환
+
+val data1: Int = 10
+val data2: Double = data1.toDouble()
+
+// 그런데 상속 관계에서도 캐스팅이 필요하다. 하위 객체가 상위 타입으로 표현해야 하거나 반대로 상위 타입의 객체가 하위 타입으로 표현해야 하는 경우가 발생
+
+// 스마트 캐스팅
+
+// 스마트 캐스팅(Smart Casting)개발자가 코드에서 명시적으로 캐스팅을 선언하지 않아도 자동으로 캐스팅되는 것을 의미
+
+//is 예약어 이용
+
+//코틀린에서는 is라는 연산자를 제공하는데 이 연산자로 타입을 확인할 수 있다.
+
+//소스_ 기초 타입의 스마트 캐스팅
+
+fun smartCast(data: Any): Int{
+    if(data is Int) return data * data
+    else return 0
+}
+fun main5(args: Array<String>){
+    println("result : ${smartCast(10)}")
+    println("result : ${smartCast(10.0)}")
+}
+
+//data is Int 구문에 의해 매개변수 data의 타입이 Int 타입의 데이터면 자동으로 형 변환이 발생. 결국, 개발자가 함수 등을 이용해 형 변환을 하지 않아도 자동으로 형 변환이 되는 스마트 캐스팅이 발생한 예
+
+// 그런데 is 연산자에 의한 스마트 캐스팅은 기초 데이터 타입에만 적용 X
+
+//소스_객체의 is에 의한 스마트 캐스팅
+
+class MyClass1{
+    fun fun1(){
+        println("fun1()...")
+    }
+}
+class MyClass2{
+    fun fun2(){
+        println("fun2()...")
+    }
+}
+fun smartCast2(obj: Any){
+    if(obj is MyClass1) obj.fun1()
+    else if(obj is MyClass2) obj.fun2()
+}
+
+fun main6(args: Array<String>){
+    smartCast2(MyClass1())
+    smartCast2(MyClass2())
 }

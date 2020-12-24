@@ -209,5 +209,5 @@ class MainActivity : AppCompatActivity() {
     // 함수의 오버라이드와 마찬가지로 프로퍼티도 override 예약어는 open을 내장하는 개념
     // 즉, override가 명시된 프로퍼티는 open을 추가하지 않아도 하위에서 재정의할 수 있도록 허용
 
-    //
+    //소스_override
 }

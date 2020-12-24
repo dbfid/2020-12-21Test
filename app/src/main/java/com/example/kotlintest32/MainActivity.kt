@@ -479,3 +479,185 @@ class PropertyVisibilityTest2{ //여기에 data라는 이름의 프로퍼티를 
 
 // 상속 관계 선언 시 extends 예약어를 사용하지 않고 콜론(:)을 이용해 타입 표현으로 상속 관계를 표현한다.
 
+class Product(val name: String, val price:Int)
+
+data class User(val name: String, val age: Int)
+
+fun main2(args: Array<String>){
+    var product = Product("prod1",100)
+    var product1 = Product("prod1", 100)
+    println(product.equals(product1))
+
+    var user = User("kkang", 30)
+    var user1 = User("kkang", 30)
+    println(user.equals(user1))
+}
+
+//추상 클래스도 클래스 자체로 객체 생성이 불가능하다. 서브 클래스로 만들어 사용해야 한다. 그리고 sealed 예약어는 내부적으로 abstract를 내장하고 있으므로 추상 클래스와 차이가 없어 보인다.
+
+// Nested 클래스
+// 어떤 클래스 내부에 정의한 클래스를 프로그래밍 언어에서 흔히 inner 클래스라 부르지만, 코틀린에서는 inner라는 예약어가 있으므로 예약어와 용어 차이를 위해 여기서는 Nested 클래스로 통칭하겠습니다(공식 메뉴얼에서도 Nested 클래스로 소개합니다.)
+
+class Outer {
+    private var no: Int = 10
+    fun outerFun(){
+        println("outerFun()")
+    }
+    inner class Nested{
+        val name: String = "kkang"
+        fun myFun(){
+            println("Nested..myFun...")
+            no = 20
+            outerFun()
+        }
+    }
+}
+
+/*
+fun main10(args: Array<String>){
+    val obj: Outer.Nested = Outer.Nested() // <---- 여기서 에러가 난다.
+    println("${obj.name}")
+    obj.myFun()
+}*/
+
+//소스_inner 클래스의 객체 생성
+
+class Outer2 {
+    private var no: Int = 10
+    fun outerFun() {
+        println("outerFun()...")
+    }
+    inner class Nested{
+        val name: String = "kkang"
+        fun myFun(){
+            println("Nested.. myFun...")
+            no = 20
+            outerFun()
+        }
+    }
+    fun createNested(): Nested{
+        return Nested()
+    }
+}
+
+fun main11(args: Array<String>){
+    val obj1: Outer2.Nested = Outer2().Nested()
+    val obj2: Outer2.Nested = Outer2().createNested()
+}
+
+// Object 클래스
+
+// 익명 클래스는 이름 없는 클래스라는 의미
+// 클래스를 선언하기는 하는데 클래스명이 없이 선언하겠다는 의도.
+// 이름이 없는 클래스를 왜 굳이 정의하는 것일까? 하지만 실제로 개발을 하다 보면 많이 사용됨
+
+// 어떤 클래스를 선언하기는 해야 하는데 이 클래스의 객체를 여러 개 생성 하지 않고. 딱 한 번만 생성한다면 굳이 정성 이름으로 클래스를 선언하는 게 귀찮거나 프로그램 코드를 복잡하게 만들 수 있다.
+// 이럴 때 이름 없는 클래스로 선언하고 바로 생성해서 이용한다.
+
+// 코틀린에서는 익명 클래스를 특정 클래스의 내부 클래스로 정의할 수도 있고 최상위에 정의할 수도 있다.
+
+// object를 이용한 익명 클래스를 정의할 때 사용합니다. 클래스 선언 때 class 예약어를 작성하지 않고 object {} 형태로 선언합니다. 이렇게 선언한 클래스는 클래스명이 없지만. 선언과 동시에 객체가 생성 됩니다.
+
+// 반복해서 객체 생성은 불가능하며, 생성과 동시에 생성된 객체를 이용한다.
+
+//소스_object로 클래스를 작성
+
+val obj1 = object{
+    var no1: Int = 10
+    fun myFun(){
+
+    }
+}
+
+class Outer4 {
+    val obj2 = object{
+        var no2: Int = 0
+        fun myFun(){
+
+        }
+    }
+}
+
+//소스_object 이용 시 멤버 접근 문제
+
+//소스 _ object 멤버 이용
+
+class Outer5 {
+
+    private var no: Int = 0
+
+    private val myInner = object {
+        val name: String = "kkang"
+        fun innerFun(){
+            println("innerFun...")
+            no++
+        }
+    }
+
+    fun outerFun(){
+        myInner.name
+        myInner.innerFun()
+    }
+}
+
+/*
+fun main12(args: Array<String>){
+    val obj = Outer()
+    obj.myInner.name
+}*/
+
+//object 선언
+
+//지금까지 사용한 object는 이름 없는 클래스를 정의하고 바로 생성하는 방법이었지만. object 예약어를 이용해 이름이 있는 클래스도 선언할 수 있었다.
+
+//형식
+// val obj = object{ }
+
+//위의 사용예에서는 object 뒤에 클래스 영역인 {}만 추가됐지만, object와 {} 사이에 클래스명을 명시해 선언할 수도 있습니다.
+
+//형식
+// object 클래스명 {}
+
+// 위와 같이 선언하면 클래스 선언과 동시에 클래스명과 같은 이름의 객체까지 생성됩니다. 결국, "object 클래스명 {}"는 객체 생성 구문 입니다.
+
+//소스_object로 이름 있는 클래스 선언
+
+class NormalClass{
+    fun myFun(){ }
+}
+
+object ObjectClass{
+    fun myFun() {}
+}
+
+fun main13(args: Array<String>){
+    val obj1: NormalClass = NormalClass()
+    val obj2: NormalClass = NormalClass()
+    obj1.myFun()
+
+    /*val obj3: ObjectClass = ObjectClass() */// < --- 에러
+
+
+    ObjectClass.myFun()
+}
+
+//소스 _ 코틀린의 싱글톤
+
+object Text { }
+
+// companion 에약어
+
+// 이름이 있는 object 클래스를 최상위에 작성하지 않고 특정 클래스 안에 작성할 수도 있습니다.
+
+// 소스 _ Nested 클래스로서 object 클래스
+
+class Outer6{
+    object NestedClass{
+        val no: Int = 0
+        fun myFun(){ }
+    }
+}
+fun main20(args: Array<String>){
+    val obj = Outer()
+
+}

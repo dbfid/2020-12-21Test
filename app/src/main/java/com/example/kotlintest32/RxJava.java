@@ -84,6 +84,26 @@ public class RxJava extends AppCompatActivity {
            }
        });
     }
+
+  /*  public class ClosureTest{
+        List<Integer> list = Arrays.asList(1,2);
+
+        private void test(){
+            int no = 10;
+            int sum = 0;
+            list.forEach(t ->
+                    System.out.println(sum =+ t) // <-- 여기서 에러가 난다.
+            );
+        }
+        public static void main(String[] args){
+            new ClosureTest().test();
+        }
+    }
+*/
+
+    //람다 표현식을 t -> System.out.println(sum += t)로 작성했는데 이 람다에서 외부 변수인 sum에 접근하고 있다.
+
+    //그런데 외부 변숫값을 변경하려는 시도는 컴파일 에러다. 람다에서 외부 변수는 fional 입니다. 따라서 데이터를 참조해서 이용할 수는 있어도 변경은 불가능합니다.
 }
 //위으 소스를 보면 람다 함수 내에서 closureTest() 함수의 변수에 접근하는 경우와 그렇지 않은 경우의 차이가 명확하게 보입니다. 내부적으로 closureTest() 함수의 변수까지 포함된 객체를 만들어 반환하므로 함수가 종료되더라도 closureTest() 함수의 변수를 그대로 이용할 수 있습니다.
 
@@ -97,7 +117,9 @@ public class RxJava extends AppCompatActivity {
     //inline을 일반 함수에는 사용 불가능??
     // 일반 함수 선언에도 inline을 추가할 수 있다. 하지만 일반 함수에서는 인라인의 이점이 별로 없다.
 
-//소스 _클로저 적용 자바 변형 코드
+// 코틀린에서는 람다 함수에서 외부 함수의 데이터 접근뿐 아니라 변경도 가능하다
+
+// 클로저에 의해 내장 함수에서 외부 함수의 데이터에 접근할 수 있는 것을 살펴보았습니다. 그런데 외부 함수의 데이터를 이용하는 것뿐 아니라 변경할 수도 있습니다.
 
 
 

@@ -2,12 +2,8 @@ package com.example.kotlintest32
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.transition.Transition
-import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.SimpleTarget
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -368,4 +364,39 @@ fun main10(args: Array<String>){
     println("${someFun1(10)}")
     println("${someFun2(10)}")
 }
+
+//소스 _ 외부 변수 변경
+
+fun closureTest2(): (Int) -> Unit{
+    var sum = 0
+    return{
+        for(i in 1..it){
+            sum += i
+        }
+    }
+}
+
+// 하지만 자바에서는 람다 함수에서 외부 함수의 데이터 변경은 허용하지 않습니다. 다음은 자바 코드입니다.
+
+//집합 연산 함수
+
+// forEach(), forEachIndexed()
+
+//컬렉션 타입의 데이터를 이용할 때 forEach() 함수도 자주 이용한다.
+
+//forEach() 함수는 단순히 컬렉션 타입의 데이터 개수만큼 특정 구문을 반복 실행할 때 유용합니다.
+
+//소스_컬랙션 타입 데이터 반복 획득
+
+//filter() 함수로 추출된 데이터가 2개라면 ForEach() 함수가 두 번 호출되며 호출 때마다 데이터를 차례로 forEach() gkatndml aoroqustnfh wlwjdehls {}에 전달해 줍니다.
+
+//forEachIndexed() 함수는 forEach() 함수와 동일하며 단지 람다 함수에 인덱스갑ㅆ까지 전달해 줍니다.
+
+
+// all(), any()
+// all() 함수는 컬렉션 타입의 데이터가 특정 조건에 모두 만족하는지 판단할 때 사용하며, any() 함수는
+
+// 특정 조건에 만족하는 데이터가 잇는지 판단할 때 사용합니다.
+
+//소스_all(), any() 함수 테스트
 

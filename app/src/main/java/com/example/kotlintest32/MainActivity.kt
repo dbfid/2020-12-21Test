@@ -400,3 +400,115 @@ fun closureTest2(): (Int) -> Unit{
 
 //소스_all(), any() 함수 테스트
 
+//count(), find()
+
+//소스 _ all(), any() 테스트
+fun main16(args: Array<String>){
+    class User(val name: String, val age: Int)
+    val list = listOf(User("kkang", 33),User("lee",28))
+
+    println("count test : ${ list.count {it.age > 25}}")
+    val user = list.find {it.age > 25}
+    println("find test : ${user?.name} ${user?.age}")
+}
+
+fun main17(args: Array<String>){
+    //fole() 함수는 초깃값을 지정할 수 있고
+    //reduce() 함수는 초깃값을 지정할 수 없다.
+
+    var result = listOf(1, 2).fold(10, { total, next ->
+        println("${total} ... ${next}")
+        total + next
+    })
+    println("fold test : $result")
+}
+
+fun main18(args: Array<String>){
+    val list2 = listOf<Int>(12,8,9,20)
+    val resultList2 = list2.filter {it > 10}
+    for(i in resultList2){
+        println(i)
+    }
+}
+
+//소스 _ filterNot()
+fun main11(args: Array<String>){
+    listOf(21,1,12,5,23).filterNot {it > 10}.forEach{println(it)}
+}
+
+//소스 _ drop
+fun main13(args: Array<String>){
+    listOf(1,2,3,4).drop(2).forEach{println(it)}
+}
+
+//소스 _ elementAt
+fun main14(args: Array<String>){
+    val result=listOf(2,5,10,8).elementAt(2)
+    println("elementAt test : $result")
+}
+//만약 인데스값이 데이터 범위를 벗어나도 IndexOutOfBoundsException이 발생하지 않는다.
+// 대신, 지정된 람다 함수가 실행되고 그 람다 함수에서 변환 값을 변환합니다.
+
+//소스 _ elementAtOrElse()
+fun main15(args: Array<String>){
+    var result1 = 0
+    result1 = listOf(2,5,10,8).elementAtOrElse(5, { 0 })
+    println("elementAtOrElse test : $result1")
+}
+
+//elementAtOrElse(5, { 0 })으로 지정했습니다. 인덱스 5의 데이터를 추출하는 구문이다. 인덱스 5는 데이터 범위를 벗어난 값입니다. 이럴 때는 { 0 } 부분이 실행됩니다. 위에서는 데이터 범위를 벗어난 인덱스캆을 전달하면 단순히 0을 반환하도록 작성했다.
+
+fun main19(args: Array<String>){
+    var result1 = 0
+    result1=listOf(2,5,10,8).first { it % 5 == 0 }
+    println("first test : $result1")
+}
+
+//소스 _ lasat()
+fun main20(args: Array<String>){
+    var result1 = listOf(2, 5, 10, 8).last {it % 5 == 0}
+    println("last test : $result1")
+}
+
+//last() 함수를 이용할 때 만약 조건에 맞는 데이터가 하나도 없으면 NoSuchElementException이 발생한다. 그리고 lastOrNull() 함수는 first() 함수와 동일한데, 만약 조건에 맞는 데이터가 없으면 null을 반환합니다.
+
+fun main21(args: Array<String>){
+    var result1 = 0
+    result1 = listOf(2,5,10,2).indexOf(2)
+    println("indexOf test : $result1")
+}
+
+//소스 _ indexOfFirst()
+fun main22(args: Array<String>){
+    var result1 = 0
+    result1 = listOf(2,5,10,2).indexOfFirst {it % 2 == 0}
+    println("indexOfFirst test : $result1")
+}
+
+// indexOfFirst { it % 2 == 0 }로 작성했으므로 람다 함수 조건은 2로 나누었을 때 나머지가 0인 데이터입니다. 그 데이터가 위차하는 첫 번째 인덱스값을 반환합니다.
+
+// 소스_indexOfLast()
+fun main23(args: Array<String>){
+    var result1 = 0
+    result1 = listOf(2, 5, 10, 2).indexOfLast{it % 2 == 0}
+    println("indexOfLast test : $result1")
+}
+
+// Null 안전성
+
+// Null 안전성이란?
+// Null이란 프로그램에서 아무 값도 대입하지 않은 상태를 말함.
+// 프로그램의 데이터는 메모리에 저장합니다. 그런데 데이터가 메모리의 어느 위치에 저장됐는지 알아야 그 메모리에 접근해 데이터를 가져오거나 수정할 수 있습니다.
+
+//특히 객체는 (코틀린에서는 모든 것이 객체입니다) 흔히 참조 변수라고 표현해서 실제 객체에 데이터가 대입된 게 아니라 데이터를 가지는 메모리의 주소 값이 저장된 변수다. 그런데 객체에 대입된 주소 값이 없는 상태, 즉 Null은 객체가 생성되지 않아서 메모리 할당이 이루어지지 않은 상태를 이야기합니다.
+
+// 문제는 Null이 메모리 할당이 이루어지지 않은 상태를 표현하기 위한 용도이지만, 개발 때는 참 귀찮은 존재다.
+// 프로그램을 개발할 때 Null 상태는 표현할 수 있지만 Null 상태인 변수에 접근하면 NullPointException(흔히 NPE라고 부른다.)이라는 에러가 발생한다.
+
+//Null 상태의 변수는 할당된 메모리가 없기 때문에 접근을 시도하면 에러가 발새앟ㄹ 수밖에 없다.
+
+// 변수가 Null인지 아닌지 확인하고 Null이면 어떻게 처리하고, Null이 아니면 어떻게 처리한다 등의 코드가 계속 반독될 수 밖에 없다.
+
+//Null 안전성이란 코틀린에서 Null이라는 개념이 없다는 것이 아니라, 이 Null에 다양한 처리를 도와줌으로써 Null에 의한 NPE가 발생하지 안흔ㄴ 프로그램을 작성할 수 있게 해준다는 개녑이다.
+
+//

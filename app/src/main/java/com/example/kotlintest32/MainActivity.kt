@@ -511,4 +511,66 @@ fun main23(args: Array<String>){
 
 //Null 안전성이란 코틀린에서 Null이라는 개념이 없다는 것이 아니라, 이 Null에 다양한 처리를 도와줌으로써 Null에 의한 NPE가 발생하지 안흔ㄴ 프로그램을 작성할 수 있게 해준다는 개녑이다.
 
-//
+//Null 허용과 Null불허
+
+//소스 _ Nullable과 Non-Nullable
+
+fun main24(args: Array<String>){
+    var data1: String = "kkang"
+    var data2: String? = null
+
+    fun main(args: Array<String>){
+        /*data1 = null*/ // <--- 이러면 에러다
+    }
+}
+
+//프로퍼티를 선언할 때 타입 뒤에 물음표(?)를 추가하면 Null을 대입할 수 있고, 물음표를 추가하지 않으면 Null을 대입할 수 없습니다. Null 불허로 선언한 프로퍼티에 null을 대입했으므로 컴파일 에러가 발생합니다.
+
+// 또한, Null 불허로 선언한 프로퍼티를 Null 허용으로 선언한 프로퍼티에 댕비하는 것은 상관없지만, Null 허용으로 선언한 프로퍼티를 Null 불허 프로퍼티에 대입하면 컴파일 에러가 발생합니다. 어떠한 형태로든 Null 불허 프로퍼티에 Null 불허 프로퍼티에 Null을 대입할 수는 없다.
+
+// Null 확인 연산자
+
+fun main25(args: Array<String>){
+
+    var data1 :String? = "kkang"
+
+    val length1: Int? = if(data1 != null){
+        data1.length
+    }else {
+        null
+    }
+}
+
+//소스 _ ?.을 이용한 Null 체크
+
+fun main26(args: Array<String>){
+    var data1: String? = "kkang" //data1은 Null 허용으로 선언한 프로퍼티다.
+
+    var length2: Int? = data1?.length // 이 프로퍼티의 length에 접근할 때 Null 확인을 해주어야 한다. if-else 문으로 하지 않고 ?.연산자로도 가능하다
+    println(length2)
+
+    data1 = null
+    length2 = data1?.length
+    println(length2)
+}
+
+// ?.연산자는 Null을 안전하게 사용하기 위해 제공하는 연산자로 프로퍼티 값이 Null이 아니면 뒤의 length가 실행되고 Null이면 null을 반환합니다. 결국, data1.length 구문은 data1이 Null이 아닐 때만 길이를 반환하고 만약 Null이면 null을 반환한다.
+
+// ?. 연산자로 Null을 확인하는 방법은 객체의 연결 구조에서도 사용할 수 있습니다.
+
+//소스 _ ?.을 이용한 Null 체크 - 객체의 연결 구조
+
+class Address {
+    val city: String?="seoul"
+}
+
+class User{
+    val address: Address? = Address()
+}
+
+fun main27(args: Array<String>){
+    val user: User? = User()
+
+    println(user?.address?.city)
+}
+

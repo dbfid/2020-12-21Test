@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.ClassCastException
 
 
 class MainActivity : AppCompatActivity() {
@@ -574,3 +575,176 @@ fun main27(args: Array<String>){
     println(user?.address?.city)
 }
 
+fun main28(args: Array<String>){
+    val array = arrayOf("hello", null, "kkang")
+
+    array.forEach {
+        if(it != null){
+            println("$it .. ${it.length}")
+        }
+    }
+
+    array.forEach {
+        it?.let{
+            println("$it .. ${it.length}")
+        }
+    }
+}
+
+// 엘비스 연산자
+
+// ?: 연산자를 이용해 Null을 처리할 수도 있습니다. 흔히 ?:을 엘비스 연산자(Elvis Operator)라고 부르며 Null 허용 데이터를 처리할 때 Null 처리를 명시할 수 있습니다. ?. 연산자는 Null이면 null
+
+// 때로는 Null일 때 대입해야 하는 값이 있거나 실행해야 하는 구문이 있습니다. 이럴 때 ?: 연산자를 이용합니다. ?: 연산자를 독릭접으로 사용할 수도 있고 ?. 연산자와 함께 사용할 수도 있습니다.
+
+// 소스 _ ?: 연산자
+
+fun main29(args: Array<String>){
+    var data: String? = "kkang"
+
+    var length: Int = if(data != null){
+        data.length
+    }else{
+        -1
+    }
+
+    data = null
+
+    length = data?.length ?: -1
+
+    println(length)
+
+    data ?: println("data is null")
+}
+
+// 줄에 Null 허용 프로퍼티가 있습니다. 이 프로퍼티의 데이터가 정상적으로 대입되어 있으면 문자열의 길이를 계산하고, Null이면 -1을 대입한다는 가정입니다. 일반적으로 Null 안전성을 지원하는 연산자를 사용하지 않는다면
+
+// Null이면 -1을 대입한다는 가정입니다. 일반적으로 Null 안전성을 지원하는 연산자를 사용하지 않는다면 줄처럼 직접 if-else 문으로 작성할 수 있습니다.
+
+// 그런데 이 부분을 ?:연산자를 이용하여 쉽게 구현할 수 있습니다.
+
+// data?.length라고 작성했습니다. data가 Null이 아니면 length를 계산하고 Null
+
+// 예외 처리
+
+// 절에서 다루는 예외(Exception)처리는 컴파일 에러(Error)를 이야기하는 것이 아니라, 실행 시 발생하는 예외 처리입니다, 아무리 프로그램을 잘 작성한다고 하더라도 얼마든지 예외가 발생할 수 있습니다.
+
+// 예를 들어 네트워크 서버에 연결하여 데이터를 입출력할 때 아무리 정상적인 알고리즘으로 작성하더라도 갑자기 네트워크 연결이 끊어지는 상황은 언제든지 발생가능
+
+// 예외 처리
+
+// 이번 절에서 다루는 예외(Exception) 처리는 컴파일 에러(Error)를 이야기하는 것이 아니라, 실행 시 발생하는 예외 처리입니다. 아무리 프로그램을 잘 작성한다고 하더라도 얼마든지 예외가 발생할 수 있습니다. 예를 들어 네트워크 서버에 연결하여 데이터를 입출력할 때 아무리 정상적인 알고리즘으로 작성하더라도 갑자기 네트워크 연결이 끊어지는 상황은 언제든지 발생할 수 있습니다.
+
+// 예외 발생 연산자
+
+// !!연산자는 Null이면 예외를 발생시킵니다. Null일 때 ?. 나 ?
+
+// NPE가 발생하지 않게 작성할 수도 있지만, 때로는 NPE를 발생시켜야 할 때도 있습니다. 이때 사용하는 연산자가 !!입니다.
+
+// 소스_!! 연산자
+
+/*
+fun main30(args: Array<String>){
+
+    var data: String? = "kkang"
+
+    data!!.length
+
+    data = null
+
+    data!!.length
+
+}*/
+
+// 소스 _ safe cast
+
+fun main30(args: Array<String>){
+    val strData : String = "kkang"
+
+    val intData: Int? = strData as? Int
+
+    println(intData)
+}
+
+
+//try - catch - finally 구문으로 예외 처리
+
+//소스 _ try-catch-finally 구조
+
+fun main31(args: Array<String>){
+    try{
+        println("try top...")
+
+        val data: String = "10"
+    }catch (e: Exception){
+        println("catch.....")
+    }finally{
+        println("finally....")
+    }
+}
+
+//위의 소스는 예외가 발생하지 않았을 때의 수행 흐름을 보여줍니다. try {} 영역이 있고 이어서 catch(){}와 finallly {} 영역이 있습니다. try 영역은 생략할 수 없으며 정상적으로 수행해야 할 구문을 작성합니다. try 영역에 작성한 구문이 실행될 때 예외가 발생하는지에 따라 실행
+
+//흐름이 달라집니다.
+
+// 소스 _ 예외 발생 시의 수행 흐름
+
+fun main32(args: Array<String>){
+    try{
+        println("try top...")
+
+        val data: String = "kkang"
+
+        val intData: Int? = data.toInt()
+
+        println("try bottom...")
+    }catch (e: Exception){
+        println("catch....${e.toString()}")
+    }finally{
+        println("finally....")
+    }
+}
+
+///try 영역이 실행되다가 예외가 발생하면 try의 나머지 부분이 실행되지 않습니다. 그래서 "try bottom"
+// 이라는 문자열은 출력되지 않았습니다. try 영역에서 예외가 발생하는 순간 catch 영역이 실행되고, 마지막으로 finally 영역이 실행됩니다. catch 영역에서 예외 메시지를 출력하기 위해 e.toString()을 사용했습니다. 이처럼 catch 문를 여러 개 작성한다는 것은 try 영역에서 발생하는 예외 타입이 여러 가지일 때입니다.
+
+//소스 _ catch 문 여러 개 작성
+
+fun some(array: Array<out Any>){
+    try{
+        println("try top...")
+
+        val intData: Int = array[0] as Int
+
+        val data: String = array[0] as String
+
+        val data2: Int = data.toInt()
+
+    }catch(e: ClassCastException){
+        println("catch... ClassCastException")
+    }catch (e: ArrayIndexOutOfBoundsException){
+        println("catch... ArrayIndexOutOfBoundsException")
+    }catch (e: Exception){
+        println("catch... Exception... ${e.toString()}")
+    }
+}
+
+fun main33(args: Array<String>){
+    // 캐스팅 예외
+    val array = arrayOf("0", 1, "6")
+    some(array);
+
+    //배열 데이터 접근 예외
+    val array2 = arrayOf(10, "5")
+    some(array2)
+
+    //수자 타입 예외
+    val array3 = arrayOf(10,0,"world")
+    some(array3)
+}
+
+//try 영역이 실행되다가 예외가 발생하면 try의 나머지 부분이 실행되지 않습니다. 그래서 "try bottom"이라는 문자열은 출력되지 않았습니다. try 영역에서 예외가 발생하는 순간 catch 영역이 실행되고, 마지막으로 finally영역이 실행됩니다.
+
+//소스 _ try - catch - finally 문의 다양한 사용 예
+
+//

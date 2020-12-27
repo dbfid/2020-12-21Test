@@ -747,4 +747,121 @@ fun main33(args: Array<String>){
 
 //소스 _ try - catch - finally 문의 다양한 사용 예
 
-//
+//throw를 이용하여 예외를 발생시킵니다.
+
+//Exception은 예외 타입을 표현하는 클래스이고 매개변수는 예외 메시지입니다. 이처럼 Exception 클래스의 객체를 생성하여 throw 뒤에 명시하면 예외가 발생합니다. 만약 줄이 실행된다면 이 함수는 더 이상 실행되지 않고 함수를 호출한 곳으로 반환합니다.
+
+//some() 함수를 호출하면 결국 예외가 발생하여 some() 함수 실행이 중단됩니다. 그리고 발생한 것입니다. 그리고 catch 문이 실행됩니다.
+
+// try - catch - finally 문으로 예외를 처리하면 유용한 것 같은데, 왜 굳이 throw로 예외를 발생시켜야 하나?
+
+// 예외를 강제로 발생시키는 게 이상해 보일 수도 있지만, 실제로 많이 사용하는 기법. 예를 들어 어떤 함수가 정상적으로 실행되지 못하는 상황이 발생할 수도 있다.
+
+// 그 상황을 함수를 호출한 곳에 알려줄 때 예외를 발생시킵니다. 그러면 함수를 호출한 곳에서는 try - catch 문으로 처리하고 호출한 함수에서 무언가 문제가 생겼다는 사실을 알 수 있게 한다.
+
+class MyException(msg: String): Exception(msg){ //MyException이라는 예외 클래스를 정의 Exception을 상속받아 작성하며 예외 메시지는 Exception에서 유지해주므로 상위 클래스의 생성자에 전달. 그런데 필요하다면 예외 클래스 내에 예외와 관련된 프로퍼티나 함수를 작성 가능.
+    // 이렇게 만든 예외 클래스를
+    val errorData: String = "some error data"
+    fun errorFun(){
+        println("errorFun call....")
+    }
+}
+
+fun some1(){
+    throw MyException("My Error...") //여기 줄 처럼 throw로 이용할 수도 있음
+}
+
+fun main34(args: Array<String>){
+    try{
+        some1() //여기서 MyException이 발생하고
+    }catch (e: MyException){// 여기서 catch문이 실행됨
+       println("error message : ${e.toString()}")
+        println("error data : ${e.errorData}")
+        e.errorFun()
+    }
+}
+
+//코틀린에서 throw는 일종의 표현식. 따라서 throw 구문을 프로퍼티에 대입할 수 있으며 throw만을 반환하는 함수라면 반환 타입을 Nothing으로 지정가능
+
+// 코틀린에는 자바의 throws가 없다.
+
+// 자바에서 제공하는 예외 처리 내용 중 하나가 throws입니다. throws는  함수를 선언할 때 선언 부분에 추가해서 이 함수에서 예외를 반환할 수도 있다고 명시하는 구문
+
+// 확장의 원리
+
+//확장이라는 것은 클래스 내부에 선언한 함수와 프로퍼티 이외에 다른 함수나 프로퍼티를 추가해서 이용 하는 것
+
+// 객체지향 프로그래밍에서 일반적으로 클래스 확장을 위해 사용하는 방법은 상속 기법입니다. 그러나 이 책에서는 용어의 혼동을 피하고자 확장이라는 단어는 상속을 통하지 않고 기능을 추가하는 방법에만 사용하겠습니다.
+
+// 상속은 객체지향 프로그래밍의 핵심이다.
+
+// 상위 클래스를 정의하고 그 클래스를 상속받아 하위 클래스를 정의합니다.
+
+// 그러면 하위 클래스에서는 상위 클래스에 정의된 함수와 프로퍼티를 그대로 상속받아 자신의 것처럼 이용할 수 있습니다. 또한, 하위 클래스에서 자신만을 위한 함수와 프로퍼티를 더 추가할 수도 있습니다.
+
+//소스 _ 상속에 의한 기능 추가
+
+open class Super{ //Super 클래스가 있고 이 Super를 상속받아 Sub 클래스를 만들었다. 상속을 통해 Sub 클래스에서는 Super 클래스에 정의된 함수와 프로퍼티를 그대로 이용할 수 있다.
+    val superData: Int = 10
+    fun superFun(){
+        println("superFun....")
+    }
+}
+
+class Sub: Super(){ //상속을 통해 Sub 클래스에서는 Super 클래스에 정으된 함수와 프로퍼티를 그대로 이용할 수 있습니다. 그리고 Sub 클래스에 함수와 프로퍼티를 더 추가했습니다. 결국, Sub은 Super 클래스의 내용에 무언가를 더 추가한 클래스가 됩니다.
+    val subData: Int = 20
+    fun subFun(){
+        println("subFun...")
+    }
+}
+
+fun main36(args: Array<String>){
+    val obj: Sub = Sub()
+    println("superData : ${obj.superData}, subData : ${obj.subData}")
+    obj.superFun()
+    obj.subFun()
+}
+
+//상속받지 않고 이미 선언된 클래스에 함수나 프로퍼티를 추가해서 이용하는 방법이 있다
+
+// 이게 코틀린에서 제공하는 확장이라는 개념이다.
+
+// 위의 작성했던 소스를 그대로 상속을 통하지 않고 확장으로 작성해 보겠습니다.
+
+class Super2 {
+    val superData: Int = 10
+    fun superFun(){
+        println("superFun....")
+    }
+}
+
+val Super.subData: Int
+    get() = 20
+
+fun Super.subFun(){
+    println("subFun.....")
+}
+
+fun main37(args: Array<String>){
+    val obj: Super = Super()
+    println("superData : ${obj.superData}, subData : ${obj.subData}")
+    obj.superFun()
+    obj.subFun()
+}
+
+//상속을 이용하지 않고 함수와 프로퍼티를 클래스에 추가해서 사용하는 것을 확장이라고 부릅니다.
+
+//기존 클래스에 함수를 추가하려면 다음의 형식에 따릅니다. 여기서 리시버 타입(Receiver Type)은 확장 대상이 되는 클래스입니다.
+
+//형식
+
+//fun Receiver Type(.)확장 함수
+
+//확장 대상 클래스에 점 (.)으로 확장 함수를 명시하는 방법입니다. 예를 들어 Super라는 클래스에 subFun() 이라는 함수를 추가하겠다면 fun Super.subFun() {}으로 작성합니다.
+
+// 정적 등록에 의한 실행
+
+//기존 클래스에 함수나 프로퍼티를 간단히 추가해서 사용한다는 개념이지만 주의할 점이 있습니다. 확장 함수는 기존 클래스 내에 정적으로 추가되지는 않습니다. 확장 클래스가 아닌 외부에 작성되었다가
+
+// 확장 함수는 클래스 외부에 정적으로 등록됩니다. 따라서 확장한 클래스 타입만 인지할 수 있으며 동적으로 상위 클래스를 판단할 수는 없다. 확장 시 사용한 확장 클래스만 인식한다는 이야기 입니다. 정적 등록이란 무엇일까?
+

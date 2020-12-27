@@ -104,6 +104,64 @@ public class RxJava extends AppCompatActivity {
     //람다 표현식을 t -> System.out.println(sum += t)로 작성했는데 이 람다에서 외부 변수인 sum에 접근하고 있다.
 
     //그런데 외부 변숫값을 변경하려는 시도는 컴파일 에러다. 람다에서 외부 변수는 fional 입니다. 따라서 데이터를 참조해서 이용할 수는 있어도 변경은 불가능합니다.
+
+    void some() throws Exception{
+
+    }
+
+    void test(){
+        try{
+            some();
+        }catch (Exception e){
+
+        }
+    }
+
+
+    public final class TestKt{
+        public final void some2(@NotNull Sub $receiver, int data){ // static을 없애니까 사라진다.
+            Intrinsics.checkParameterIsNotNull($receiver, "$receiver");
+            $receiver.setData(data);
+            $receiver.superFun();
+        }
+        public final void main(@NotNull String[] args){
+            Intrinsics.checkParameterIsNotNull(args, "args");
+            Sub obj = new Sub();
+            obj.some1(10);
+            some2(obj,100);
+        }
+
+    }
+
+    public class Super{
+        public void superFun(){
+            String var1 = "Super...superFun....";
+            System.out.println(var1);
+        }
+    }
+
+    public final class Sub extends Super{
+        private int data = 20;
+
+        public final int getData(){
+            return this.data;
+        }
+        public final void setData(int var1){
+            this.data = var1;
+        }
+        public void superFun(){
+            String var1 = "Sub .. superFun.... " + this.data;
+            System.out.println(var1);
+        }
+
+        public final void some1(int data){
+            this.data = data;
+            this.superFun();
+            super.superFun();
+        }
+    }
+
+
 }
 //위으 소스를 보면 람다 함수 내에서 closureTest() 함수의 변수에 접근하는 경우와 그렇지 않은 경우의 차이가 명확하게 보입니다. 내부적으로 closureTest() 함수의 변수까지 포함된 객체를 만들어 반환하므로 함수가 종료되더라도 closureTest() 함수의 변수를 그대로 이용할 수 있습니다.
 
@@ -122,6 +180,7 @@ public class RxJava extends AppCompatActivity {
 // 클로저에 의해 내장 함수에서 외부 함수의 데이터에 접근할 수 있는 것을 살펴보았습니다. 그런데 외부 함수의 데이터를 이용하는 것뿐 아니라 변경할 수도 있습니다.
 
 
+//소스 _ throws 사용 자바 소스
 
 
 

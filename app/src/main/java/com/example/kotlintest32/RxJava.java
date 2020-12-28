@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
 import java.util.concurrent.Flow;
 
 import kotlin.Function;
@@ -46,7 +47,7 @@ public class RxJava extends AppCompatActivity {
     // 이처럼 고차 함수 호출이 빈번하여 성능에 영향을 미칠 때는 인라인(inlune) 함수가 대안일 수 있습니다.
 
     // 소스_inline 함수의 자바 변형
-    public static final void main(@NotNull String[] args){
+    public static final void main(@NotNull String[] args) {
         int x2 = 20;
         int x1 = 10;
         int var10000 = x1 + x2;
@@ -54,11 +55,11 @@ public class RxJava extends AppCompatActivity {
 
     //소스 _ 일반 함수 자바 변형
 
-    public static final int normalFun1(int a, int b){
+    public static final int normalFun1(int a, int b) {
         return a + b;
     }
 
-    public static final void main2(@NotNull String[] args){
+    public static final void main2(@NotNull String[] args) {
         Intrinsics.checkParameterIsNotNull(args, "args");
         normalFun1(10, 20);
     }
@@ -70,19 +71,19 @@ public class RxJava extends AppCompatActivity {
 
     // 즉, inline은 람다 함수를 매개변수로 이용하는 곳에 사용하라는 이야기
 
-    public static final Function1 closureTest(final int x){
-       String var1 = "argument" + x;
-       System.out.println(var1);
-       return (Function1)(new Function1() {
+    public static final Function1 closureTest(final int x) {
+        String var1 = "argument" + x;
+        System.out.println(var1);
+        return (Function1) (new Function1() {
 
-           public Object invoke(Object var1) {
-               return this.invoke(((Number)var1).intValue());
-           }
+            public Object invoke(Object var1) {
+                return this.invoke(((Number) var1).intValue());
+            }
 
-           public final int invoke(int it){
-               return it * x;
-           }
-       });
+            public final int invoke(int it) {
+                return it * x;
+            }
+        });
     }
 
   /*  public class ClosureTest{
@@ -105,85 +106,169 @@ public class RxJava extends AppCompatActivity {
 
     //그런데 외부 변숫값을 변경하려는 시도는 컴파일 에러다. 람다에서 외부 변수는 fional 입니다. 따라서 데이터를 참조해서 이용할 수는 있어도 변경은 불가능합니다.
 
-    void some() throws Exception{
+    void some() throws Exception {
 
     }
 
-    void test(){
-        try{
+    void test() {
+        try {
             some();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
 
 
-    public final class TestKt{
-        public final void some2(@NotNull Sub $receiver, int data){ // static을 없애니까 사라진다.
+    public final class TestKt {
+        public final void some2(@NotNull Sub $receiver, int data) { // static을 없애니까 사라진다.
             Intrinsics.checkParameterIsNotNull($receiver, "$receiver");
             $receiver.setData(data);
             $receiver.superFun();
         }
-        public final void main(@NotNull String[] args){
+
+        public final void main(@NotNull String[] args) {
             Intrinsics.checkParameterIsNotNull(args, "args");
             Sub obj = new Sub();
             obj.some1(10);
-            some2(obj,100);
+            some2(obj, 100);
         }
 
     }
 
-    public class Super{
-        public void superFun(){
+    public class Super {
+        public void superFun() {
             String var1 = "Super...superFun....";
             System.out.println(var1);
         }
     }
 
-    public final class Sub extends Super{
+    public final class Sub extends Super {
         private int data = 20;
 
-        public final int getData(){
+        public final int getData() {
             return this.data;
         }
-        public final void setData(int var1){
+
+        public final void setData(int var1) {
             this.data = var1;
         }
-        public void superFun(){
+
+        public void superFun() {
             String var1 = "Sub .. superFun.... " + this.data;
             System.out.println(var1);
         }
 
-        public final void some1(int data){
+        public final void some1(int data) {
             this.data = data;
             this.superFun();
             super.superFun();
         }
     }
 
+    private int no;
+
+    public final int getNo() {
+        return this.no;
+    }
+
+    public final void setNo(int var1) {
+        this.no = var1;
+    }
+
+    public final class Test {
+
+        //소스 _ 이용 측 대상에 의한 자바 변형 결과
+        private int no1;
+        private String name1;
+
+        @TestAnnotation4
+        private int age;
+
+        private String phone;
+        private String email;
+
+        @TestAnnotation4
+        @TestAnnotation5
+        public final int getNo1() {
+            return this.no1;
+        }
+
+        public final void setNo1(int var1) {
+            this.no1 = var1;
+        }
+
+        public final void setName(String var1) {
+            this.name1 = var1;
+        }
+
+        public final int getAge() {
+            return this.age;
+        }
+
+        public final void setAge(int var1) {
+            this.age = var1;
+        }
+
+        public final String getPhone() {
+            return this.phone;
+        }
+
+        public final void setPhone(@TestAnnotation4 @NotNull String var1) {
+            this.phone = var1;
+        }
+
+        public final String getEmail() {
+            return this.email;
+        }
+
+        public final void setEmail(@NotNull String var1) {
+            this.email = var1;
+        }
+
+        public Test(@TestAnnotation4 @NotNull String email) {
+            super();
+            this.email = email;
+            this.no1 = 10;
+            this.name1 = "kkang";
+            this.age = 30;
+            this.phone = "0100000";
+        }
+
+    }
+
+    //소스 _ 자바 코드
+
+    public @interface JavaAnnotation {
+        int intValue();
+        //thtm _ 자바 이노테이션
+        String stringValue();
+    }
+
+
 
 }
-//위으 소스를 보면 람다 함수 내에서 closureTest() 함수의 변수에 접근하는 경우와 그렇지 않은 경우의 차이가 명확하게 보입니다. 내부적으로 closureTest() 함수의 변수까지 포함된 객체를 만들어 반환하므로 함수가 종료되더라도 closureTest() 함수의 변수를 그대로 이용할 수 있습니다.
+//위의 소스를 보면 람다 함수 내에서 closureTest() 함수의 변수에 접근하는 경우와 그렇지 않은 경우의 차이가 명확하게 보입니다. 내부적으로 closureTest() 함수의 변수까지 포함된 객체를 만들어 반환하므로 함수가 종료되더라도 closureTest() 함수의 변수를 그대로 이용할 수 있습니다.
 
 
+//inline이 추가된 hoFunTest() 함수와 이 함수를 호출하는 main() 함수 두 개를 작성했지만 자바로 변형된 결과를 보면 hoFunTest() 함수는 없다. main() 함수 하나가 정의되어 있고hoFunTest()함수의 내용은 컴파일 단계에서 main() 함수에 포함됨
 
+//결국, inline을 추가하여 함수를 정의하는 것과 그렇지 않은 것은 실행 결과는 같지만, 런타임 때 다르게 실행됩니다. 컴파일 단계에서 inline으로 정의한 함수의 내용이 호출되는 곳에 정적으로 포함되므로 런타임 때 함수 호출이 그만큼 줄고 성능에 도움이 된다는 이야기
 
-    //inline이 추가된 hoFunTest() 함수와 이 함수를 호출하는 main() 함수 두 개를 작성했지만 자바로 변형된 결과를 보면 hoFunTest() 함수는 없다. main() 함수 하나가 정의되어 있고hoFunTest()함수의 내용은 컴파일 단계에서 main() 함수에 포함됨
-
-    //결국, inline을 추가하여 함수를 정의하는 것과 그렇지 않은 것은 실행 결과는 같지만, 런타임 때 다르게 실행됩니다. 컴파일 단계에서 inline으로 정의한 함수의 내용이 호출되는 곳에 정적으로 포함되므로 런타임 때 함수 호출이 그만큼 줄고 성능에 도움이 된다는 이야기
-
-    //inline을 일반 함수에는 사용 불가능??
-    // 일반 함수 선언에도 inline을 추가할 수 있다. 하지만 일반 함수에서는 인라인의 이점이 별로 없다.
+//inline을 일반 함수에는 사용 불가능??
+// 일반 함수 선언에도 inline을 추가할 수 있다. 하지만 일반 함수에서는 인라인의 이점이 별로 없다.
 
 // 코틀린에서는 람다 함수에서 외부 함수의 데이터 접근뿐 아니라 변경도 가능하다
 
 // 클로저에 의해 내장 함수에서 외부 함수의 데이터에 접근할 수 있는 것을 살펴보았습니다. 그런데 외부 함수의 데이터를 이용하는 것뿐 아니라 변경할 수도 있습니다.
 
 
-//소스 _ throws 사용 자바 소스
+// 밀어내기와 끌어오기
 
+// Observable과 이와 간련한 Observer 타입 시그니처는 이벤트 밀어내기(push)를 지원한다.
 
+// 이들은 보통 다음 절에서 다룰 비동기 속성을 수반한다. 한편 Observable 타입은 비동기 시스템의 흐름 제어나 배압(backpressure)에 대한 접근 방식으로서 (보통 비동기 끌어오기(pull) 혹은 리액티브 끌어오기라 일컫는)
 
+// 메모리 내부 데이터
 
 
 

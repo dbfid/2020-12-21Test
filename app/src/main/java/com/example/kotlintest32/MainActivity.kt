@@ -6,6 +6,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.ClassCastException
+import kotlin.reflect.KClass
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.full.declaredMemberExtensionProperties
+import kotlin.reflect.full.memberProperties
+import com.example.kotlintest32.RxJava
+
+
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KProperty
 
 
 class MainActivity : AppCompatActivity() {
@@ -14,13 +24,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        clickButton.setOnClickListener{
+        clickButton.setOnClickListener {
             textView.text = "버튼을 눌렀습니다."
         }
 
-       Glide.with(this).load("https://www.verdict.co.uk/wp-content/uploads/2017/09/giphy-downsized-large.gif")
-           .apply(RequestOptions.centerCropTransform())
-           .into(imageView)
+        Glide.with(this)
+            .load("https://www.verdict.co.uk/wp-content/uploads/2017/09/giphy-downsized-large.gif")
+            .apply(RequestOptions.centerCropTransform())
+            .into(imageView)
     }
 
     //코틀린에서는 일반적으로 데이터 타입을 선언할 때 x1:Int형태로 콜론 ( : )을 기준으로 왼쪽에 변수명과 오른쪽에 타입을 명시
@@ -54,11 +65,12 @@ class MainActivity : AppCompatActivity() {
 
 // 소스_inline 함수
 
-inline fun hoFunTest(argFun: (x1: Int, x2: Int) -> Int){
-    argFun(10,20)
+inline fun hoFunTest(argFun: (x1: Int, x2: Int) -> Int) {
+    argFun(10, 20)
 }
-fun main(args: Array<String>){
-    hoFunTest {x1,x2 -> x1 + x2}
+
+fun main(args: Array<String>) {
+    hoFunTest { x1, x2 -> x1 + x2 }
 }
 
 
@@ -69,12 +81,11 @@ fun main(args: Array<String>){
 // 이렇게 inline을 추가한 함수는 자바라 변경 때 inline을 추가하지 않았을 때와 다르게 변형
 
 
-
 // inline을 일반 함수에도 추가할 수는 있지만 하지만 일반 함수에서는 인라인의 이점이 별로 없다.
 
 //소스 _ 일반 함수의 이용
-    fun normalFun1(a:Int, b: Int): Int{
-        return a + b
+fun normalFun1(a: Int, b: Int): Int {
+    return a + b
 }
 
 //위의 소스를 보면 normalFun1() 이라는 함수를 선언하고 이 함수를 main() 함수에서 호출하여 이용합니다. nomalFun1() 함수는 함수 타입이 매개변수로 선언되지 않은 일반 함수다.
@@ -84,13 +95,13 @@ fun main(args: Array<String>){
 
 //소스 _ inline 적용 함수
 
-inline fun inlineTest(argFun1: (x: Int) -> Int, argFun2: (x: Int) -> Int){
+inline fun inlineTest(argFun1: (x: Int) -> Int, argFun2: (x: Int) -> Int) {
     argFun1(10)
     argFun2(10)
 }
 
-fun main12(args: Array<String>){
-    inlineTest({it * 10},{it * 20})
+fun main12(args: Array<String>) {
+    inlineTest({ it * 10 }, { it * 20 })
 }
 
 // inlineTest() 함수를 선언했는데 함수 타입의 매개변수가 두 개.
@@ -102,12 +113,13 @@ fun main12(args: Array<String>){
 
 //소스 _ noinline이용
 
-inline fun inlineTest2(argFun1: (x: Int) -> Int, noinline argFun2: (x: Int) -> Int){
+inline fun inlineTest2(argFun1: (x: Int) -> Int, noinline argFun2: (x: Int) -> Int) {
     argFun1(10)
     argFun2(10)
 }
-fun main3(args: Array<String>){
-    inlineTest({it * 10}, {it * 20})
+
+fun main3(args: Array<String>) {
+    inlineTest({ it * 10 }, { it * 20 })
 }
 
 //inlineFunTest() 함수는 함수 타입의 매개변수가 두 개이며 두 번째 매개변수인 argFun2 앞에 noinline 예약어를 추가했습니다. 이렇게 하면 argFun2는 컴파일 단계에서 정적으로 호출한 곳에 포함되지 않고 실행 때 호출되어 이용됩니다.
@@ -121,14 +133,14 @@ fun main3(args: Array<String>){
 
 //소스_람다 함수에 return 사용 가능 경우
 
-inline fun inlineTest2(argFun: (X: Int, y: Int) -> Int): Int{
-    return argFun(10,0)
+inline fun inlineTest2(argFun: (X: Int, y: Int) -> Int): Int {
+    return argFun(10, 0)
 }
 
-fun callFun(){
+fun callFun() {
     println("callFun.. top")
-    val result = inlineTest2{x, y ->
-        if(y <= 0) return
+    val result = inlineTest2 { x, y ->
+        if (y <= 0) return
         x / y
     }
     println("%result")
@@ -144,19 +156,21 @@ fun callFun(){
 
 // 소스 _ 람다 함수에 return 사용 가능 경우
 
-inline fun inlineTest5(argFun5:(x: Int, y: Int) -> Int): Int{
-    return argFun5(10,0)
+inline fun inlineTest5(argFun5: (x: Int, y: Int) -> Int): Int {
+    return argFun5(10, 0)
 }
-fun callFun5(){
+
+fun callFun5() {
     println("callFun.. top")
-    val result = inlineTest5{ x, y ->
-        if( y <= 0)return
+    val result = inlineTest5 { x, y ->
+        if (y <= 0) return
         x / y
     }
     println("$result")
     println("callFun.. bottom")
 }
-fun main4(args: Array<String>){
+
+fun main4(args: Array<String>) {
     callFun5()
 }
 
@@ -167,11 +181,12 @@ fun main4(args: Array<String>){
 
 //소스_매개함수를 다른 객체에 대입해서 이용
 
-open class TestClass6{
-    open fun some(){}
+open class TestClass6 {
+    open fun some() {}
 }
-fun inlineTest6(argFun: () -> Unit){
-    val obj = object : TestClass6(){
+
+fun inlineTest6(argFun: () -> Unit) {
+    val obj = object : TestClass6() {
         override fun some() = argFun()
     }
 }
@@ -182,11 +197,12 @@ fun inlineTest6(argFun: () -> Unit){
 
 //소스_inline 함수에서 매개함수를 다른 객체에 대입 이용
 
-open class TestClass7{
-    open fun some(){
+open class TestClass7 {
+    open fun some() {
     }
-    inline fun inlineTest3(argFun7: () -> Unit){//고차 함수 선언에 inline을 추가했다는 점 함수에 inline을 명시하기만 했는데  컴파일에서 에러가 발생함
-        val obj = object : TestClass7(){
+
+    inline fun inlineTest3(argFun7: () -> Unit) {//고차 함수 선언에 inline을 추가했다는 점 함수에 inline을 명시하기만 했는데  컴파일에서 에러가 발생함
+        val obj = object : TestClass7() {
             /*override fun some() = argFun7()*/ // <--- 여기서 에러가 난다.
         }
     }
@@ -307,15 +323,16 @@ arrayLoop()*/
 // 이처럼 개발자가 라벨을 선언하지 않아도 코틀린에서는 자동으로 함수명으로 된 라벨이 추가됩니다.
 
 // 개발자 고차 함수에서의 return
-inline fun hoTest(argFun: (String) -> Unit){
+inline fun hoTest(argFun: (String) -> Unit) {
     argFun("hello")
     argFun("kim")
     argFun("kkang")
 }
-fun labelTest(){
+
+fun labelTest() {
     println("test top...")
-    hoTest{
-        if(it.length < 4) return@hoTest
+    hoTest {
+        if (it.length < 4) return@hoTest
         println(it)
     }
     println("test bottom....")
@@ -342,7 +359,7 @@ arrayLoop2()*/
 //어찌 보면 함수의 호출이 끝났는데 어떻게 함수의 데이터를 유지할 수 있는지 의문이 들고, 함수를 호출한 곳으로 데이터를 반환해 유지하면 되지 않을까 생각할 수 있지만, 함수형 프로그래밍 에서는 조금 복잡한 상황이 발생하기도 한다.
 
 //소스_함수 스코프
-fun closureTest(x: Int){
+fun closureTest(x: Int) {
     println("argument $x")
 }
 
@@ -353,25 +370,25 @@ fun closureTest(x: Int){
 
 //소스_함수 외부 데이터 이용
 
-fun closureTest10(x: Int): (Int) -> Int{
+fun closureTest10(x: Int): (Int) -> Int {
     println("argument $x")
-    return{ it * x }
+    return { it * x }
 }
 
-fun main10(args: Array<String>){
+fun main10(args: Array<String>) {
     val someFun1 = closureTest10(2)
     val someFun2 = closureTest10(3)
-    
+
     println("${someFun1(10)}")
     println("${someFun2(10)}")
 }
 
 //소스 _ 외부 변수 변경
 
-fun closureTest2(): (Int) -> Unit{
+fun closureTest2(): (Int) -> Unit {
     var sum = 0
-    return{
-        for(i in 1..it){
+    return {
+        for (i in 1..it) {
             sum += i
         }
     }
@@ -404,16 +421,17 @@ fun closureTest2(): (Int) -> Unit{
 //count(), find()
 
 //소스 _ all(), any() 테스트
-fun main16(args: Array<String>){
+fun main16(args: Array<String>) {
     class User(val name: String, val age: Int)
-    val list = listOf(User("kkang", 33),User("lee",28))
 
-    println("count test : ${ list.count {it.age > 25}}")
-    val user = list.find {it.age > 25}
+    val list = listOf(User("kkang", 33), User("lee", 28))
+
+    println("count test : ${list.count { it.age > 25 }}")
+    val user = list.find { it.age > 25 }
     println("find test : ${user?.name} ${user?.age}")
 }
 
-fun main17(args: Array<String>){
+fun main17(args: Array<String>) {
     //fole() 함수는 초깃값을 지정할 수 있고
     //reduce() 함수는 초깃값을 지정할 수 없다.
 
@@ -424,74 +442,74 @@ fun main17(args: Array<String>){
     println("fold test : $result")
 }
 
-fun main18(args: Array<String>){
-    val list2 = listOf<Int>(12,8,9,20)
-    val resultList2 = list2.filter {it > 10}
-    for(i in resultList2){
+fun main18(args: Array<String>) {
+    val list2 = listOf<Int>(12, 8, 9, 20)
+    val resultList2 = list2.filter { it > 10 }
+    for (i in resultList2) {
         println(i)
     }
 }
 
 //소스 _ filterNot()
-fun main11(args: Array<String>){
-    listOf(21,1,12,5,23).filterNot {it > 10}.forEach{println(it)}
+fun main11(args: Array<String>) {
+    listOf(21, 1, 12, 5, 23).filterNot { it > 10 }.forEach { println(it) }
 }
 
 //소스 _ drop
-fun main13(args: Array<String>){
-    listOf(1,2,3,4).drop(2).forEach{println(it)}
+fun main13(args: Array<String>) {
+    listOf(1, 2, 3, 4).drop(2).forEach { println(it) }
 }
 
 //소스 _ elementAt
-fun main14(args: Array<String>){
-    val result=listOf(2,5,10,8).elementAt(2)
+fun main14(args: Array<String>) {
+    val result = listOf(2, 5, 10, 8).elementAt(2)
     println("elementAt test : $result")
 }
 //만약 인데스값이 데이터 범위를 벗어나도 IndexOutOfBoundsException이 발생하지 않는다.
 // 대신, 지정된 람다 함수가 실행되고 그 람다 함수에서 변환 값을 변환합니다.
 
 //소스 _ elementAtOrElse()
-fun main15(args: Array<String>){
+fun main15(args: Array<String>) {
     var result1 = 0
-    result1 = listOf(2,5,10,8).elementAtOrElse(5, { 0 })
+    result1 = listOf(2, 5, 10, 8).elementAtOrElse(5, { 0 })
     println("elementAtOrElse test : $result1")
 }
 
 //elementAtOrElse(5, { 0 })으로 지정했습니다. 인덱스 5의 데이터를 추출하는 구문이다. 인덱스 5는 데이터 범위를 벗어난 값입니다. 이럴 때는 { 0 } 부분이 실행됩니다. 위에서는 데이터 범위를 벗어난 인덱스캆을 전달하면 단순히 0을 반환하도록 작성했다.
 
-fun main19(args: Array<String>){
+fun main19(args: Array<String>) {
     var result1 = 0
-    result1=listOf(2,5,10,8).first { it % 5 == 0 }
+    result1 = listOf(2, 5, 10, 8).first { it % 5 == 0 }
     println("first test : $result1")
 }
 
 //소스 _ lasat()
-fun main20(args: Array<String>){
-    var result1 = listOf(2, 5, 10, 8).last {it % 5 == 0}
+fun main20(args: Array<String>) {
+    var result1 = listOf(2, 5, 10, 8).last { it % 5 == 0 }
     println("last test : $result1")
 }
 
 //last() 함수를 이용할 때 만약 조건에 맞는 데이터가 하나도 없으면 NoSuchElementException이 발생한다. 그리고 lastOrNull() 함수는 first() 함수와 동일한데, 만약 조건에 맞는 데이터가 없으면 null을 반환합니다.
 
-fun main21(args: Array<String>){
+fun main21(args: Array<String>) {
     var result1 = 0
-    result1 = listOf(2,5,10,2).indexOf(2)
+    result1 = listOf(2, 5, 10, 2).indexOf(2)
     println("indexOf test : $result1")
 }
 
 //소스 _ indexOfFirst()
-fun main22(args: Array<String>){
+fun main22(args: Array<String>) {
     var result1 = 0
-    result1 = listOf(2,5,10,2).indexOfFirst {it % 2 == 0}
+    result1 = listOf(2, 5, 10, 2).indexOfFirst { it % 2 == 0 }
     println("indexOfFirst test : $result1")
 }
 
 // indexOfFirst { it % 2 == 0 }로 작성했으므로 람다 함수 조건은 2로 나누었을 때 나머지가 0인 데이터입니다. 그 데이터가 위차하는 첫 번째 인덱스값을 반환합니다.
 
 // 소스_indexOfLast()
-fun main23(args: Array<String>){
+fun main23(args: Array<String>) {
     var result1 = 0
-    result1 = listOf(2, 5, 10, 2).indexOfLast{it % 2 == 0}
+    result1 = listOf(2, 5, 10, 2).indexOfLast { it % 2 == 0 }
     println("indexOfLast test : $result1")
 }
 
@@ -516,11 +534,11 @@ fun main23(args: Array<String>){
 
 //소스 _ Nullable과 Non-Nullable
 
-fun main24(args: Array<String>){
+fun main24(args: Array<String>) {
     var data1: String = "kkang"
     var data2: String? = null
 
-    fun main(args: Array<String>){
+    fun main(args: Array<String>) {
         /*data1 = null*/ // <--- 이러면 에러다
     }
 }
@@ -531,23 +549,24 @@ fun main24(args: Array<String>){
 
 // Null 확인 연산자
 
-fun main25(args: Array<String>){
+fun main25(args: Array<String>) {
 
-    var data1 :String? = "kkang"
+    var data1: String? = "kkang"
 
-    val length1: Int? = if(data1 != null){
+    val length1: Int? = if (data1 != null) {
         data1.length
-    }else {
+    } else {
         null
     }
 }
 
 //소스 _ ?.을 이용한 Null 체크
 
-fun main26(args: Array<String>){
+fun main26(args: Array<String>) {
     var data1: String? = "kkang" //data1은 Null 허용으로 선언한 프로퍼티다.
 
-    var length2: Int? = data1?.length // 이 프로퍼티의 length에 접근할 때 Null 확인을 해주어야 한다. if-else 문으로 하지 않고 ?.연산자로도 가능하다
+    var length2: Int? =
+        data1?.length // 이 프로퍼티의 length에 접근할 때 Null 확인을 해주어야 한다. if-else 문으로 하지 않고 ?.연산자로도 가능하다
     println(length2)
 
     data1 = null
@@ -562,30 +581,30 @@ fun main26(args: Array<String>){
 //소스 _ ?.을 이용한 Null 체크 - 객체의 연결 구조
 
 class Address {
-    val city: String?="seoul"
+    val city: String? = "seoul"
 }
 
-class User{
+class User {
     val address: Address? = Address()
 }
 
-fun main27(args: Array<String>){
+fun main27(args: Array<String>) {
     val user: User? = User()
 
     println(user?.address?.city)
 }
 
-fun main28(args: Array<String>){
+fun main28(args: Array<String>) {
     val array = arrayOf("hello", null, "kkang")
 
     array.forEach {
-        if(it != null){
+        if (it != null) {
             println("$it .. ${it.length}")
         }
     }
 
     array.forEach {
-        it?.let{
+        it?.let {
             println("$it .. ${it.length}")
         }
     }
@@ -599,12 +618,12 @@ fun main28(args: Array<String>){
 
 // 소스 _ ?: 연산자
 
-fun main29(args: Array<String>){
+fun main29(args: Array<String>) {
     var data: String? = "kkang"
 
-    var length: Int = if(data != null){
+    var length: Int = if (data != null) {
         data.length
-    }else{
+    } else {
         -1
     }
 
@@ -658,8 +677,8 @@ fun main30(args: Array<String>){
 
 // 소스 _ safe cast
 
-fun main30(args: Array<String>){
-    val strData : String = "kkang"
+fun main30(args: Array<String>) {
+    val strData: String = "kkang"
 
     val intData: Int? = strData as? Int
 
@@ -671,14 +690,14 @@ fun main30(args: Array<String>){
 
 //소스 _ try-catch-finally 구조
 
-fun main31(args: Array<String>){
-    try{
+fun main31(args: Array<String>) {
+    try {
         println("try top...")
 
         val data: String = "10"
-    }catch (e: Exception){
+    } catch (e: Exception) {
         println("catch.....")
-    }finally{
+    } finally {
         println("finally....")
     }
 }
@@ -689,8 +708,8 @@ fun main31(args: Array<String>){
 
 // 소스 _ 예외 발생 시의 수행 흐름
 
-fun main32(args: Array<String>){
-    try{
+fun main32(args: Array<String>) {
+    try {
         println("try top...")
 
         val data: String = "kkang"
@@ -698,9 +717,9 @@ fun main32(args: Array<String>){
         val intData: Int? = data.toInt()
 
         println("try bottom...")
-    }catch (e: Exception){
+    } catch (e: Exception) {
         println("catch....${e.toString()}")
-    }finally{
+    } finally {
         println("finally....")
     }
 }
@@ -710,8 +729,8 @@ fun main32(args: Array<String>){
 
 //소스 _ catch 문 여러 개 작성
 
-fun some(array: Array<out Any>){
-    try{
+fun some(array: Array<out Any>) {
+    try {
         println("try top...")
 
         val intData: Int = array[0] as Int
@@ -720,16 +739,16 @@ fun some(array: Array<out Any>){
 
         val data2: Int = data.toInt()
 
-    }catch(e: ClassCastException){
+    } catch (e: ClassCastException) {
         println("catch... ClassCastException")
-    }catch (e: ArrayIndexOutOfBoundsException){
+    } catch (e: ArrayIndexOutOfBoundsException) {
         println("catch... ArrayIndexOutOfBoundsException")
-    }catch (e: Exception){
+    } catch (e: Exception) {
         println("catch... Exception... ${e.toString()}")
     }
 }
 
-fun main33(args: Array<String>){
+fun main33(args: Array<String>) {
     // 캐스팅 예외
     val array = arrayOf("0", 1, "6")
     some(array);
@@ -739,7 +758,7 @@ fun main33(args: Array<String>){
     some(array2)
 
     //수자 타입 예외
-    val array3 = arrayOf(10,0,"world")
+    val array3 = arrayOf(10, 0, "world")
     some(array3)
 }
 
@@ -759,23 +778,24 @@ fun main33(args: Array<String>){
 
 // 그 상황을 함수를 호출한 곳에 알려줄 때 예외를 발생시킵니다. 그러면 함수를 호출한 곳에서는 try - catch 문으로 처리하고 호출한 함수에서 무언가 문제가 생겼다는 사실을 알 수 있게 한다.
 
-class MyException(msg: String): Exception(msg){ //MyException이라는 예외 클래스를 정의 Exception을 상속받아 작성하며 예외 메시지는 Exception에서 유지해주므로 상위 클래스의 생성자에 전달. 그런데 필요하다면 예외 클래스 내에 예외와 관련된 프로퍼티나 함수를 작성 가능.
+class MyException(msg: String) :
+    Exception(msg) { //MyException이라는 예외 클래스를 정의 Exception을 상속받아 작성하며 예외 메시지는 Exception에서 유지해주므로 상위 클래스의 생성자에 전달. 그런데 필요하다면 예외 클래스 내에 예외와 관련된 프로퍼티나 함수를 작성 가능.
     // 이렇게 만든 예외 클래스를
     val errorData: String = "some error data"
-    fun errorFun(){
+    fun errorFun() {
         println("errorFun call....")
     }
 }
 
-fun some1(){
+fun some1() {
     throw MyException("My Error...") //여기 줄 처럼 throw로 이용할 수도 있음
 }
 
-fun main34(args: Array<String>){
-    try{
+fun main34(args: Array<String>) {
+    try {
         some1() //여기서 MyException이 발생하고
-    }catch (e: MyException){// 여기서 catch문이 실행됨
-       println("error message : ${e.toString()}")
+    } catch (e: MyException) {// 여기서 catch문이 실행됨
+        println("error message : ${e.toString()}")
         println("error data : ${e.errorData}")
         e.errorFun()
     }
@@ -801,21 +821,22 @@ fun main34(args: Array<String>){
 
 //소스 _ 상속에 의한 기능 추가
 
-open class Super{ //Super 클래스가 있고 이 Super를 상속받아 Sub 클래스를 만들었다. 상속을 통해 Sub 클래스에서는 Super 클래스에 정의된 함수와 프로퍼티를 그대로 이용할 수 있다.
+open class Super { //Super 클래스가 있고 이 Super를 상속받아 Sub 클래스를 만들었다. 상속을 통해 Sub 클래스에서는 Super 클래스에 정의된 함수와 프로퍼티를 그대로 이용할 수 있다.
     val superData: Int = 10
-    fun superFun(){
+    fun superFun() {
         println("superFun....")
     }
 }
 
-class Sub: Super(){ //상속을 통해 Sub 클래스에서는 Super 클래스에 정으된 함수와 프로퍼티를 그대로 이용할 수 있습니다. 그리고 Sub 클래스에 함수와 프로퍼티를 더 추가했습니다. 결국, Sub은 Super 클래스의 내용에 무언가를 더 추가한 클래스가 됩니다.
+class Sub :
+    Super() { //상속을 통해 Sub 클래스에서는 Super 클래스에 정으된 함수와 프로퍼티를 그대로 이용할 수 있습니다. 그리고 Sub 클래스에 함수와 프로퍼티를 더 추가했습니다. 결국, Sub은 Super 클래스의 내용에 무언가를 더 추가한 클래스가 됩니다.
     val subData: Int = 20
-    fun subFun(){
+    fun subFun() {
         println("subFun...")
     }
 }
 
-fun main36(args: Array<String>){
+fun main36(args: Array<String>) {
     val obj: Sub = Sub()
     println("superData : ${obj.superData}, subData : ${obj.subData}")
     obj.superFun()
@@ -830,7 +851,7 @@ fun main36(args: Array<String>){
 
 class Super2 {
     val superData: Int = 10
-    fun superFun(){
+    fun superFun() {
         println("superFun....")
     }
 }
@@ -838,11 +859,11 @@ class Super2 {
 val Super.subData: Int
     get() = 20
 
-fun Super.subFun(){
+fun Super.subFun() {
     println("subFun.....")
 }
 
-fun main37(args: Array<String>){
+fun main37(args: Array<String>) {
     val obj: Super = Super()
     println("superData : ${obj.superData}, subData : ${obj.subData}")
     obj.superFun()
@@ -866,3 +887,642 @@ fun main37(args: Array<String>){
 // 확장 함수는 클래스 외부에 정적으로 등록됩니다. 따라서 확장한 클래스 타입만 인지할 수 있으며 동적으로 상위 클래스를 판단할 수는 없다. 확장 시 사용한 확장 클래스만 인식한다는 이야기 입니다. 정적 등록이란 무엇일까?
 
 // 2020-12-28 코틀린
+
+// ExtensionClass의 함수 확장 구문을 DispatchClass 내에 작성했습니다.
+
+//제네릭()
+
+//소스 _ 배열의 이용
+fun main38(args: Array<String>) {
+    val array = arrayOf("kkang", 10, true)
+}
+
+//배열에 데이터 타입은 문자열이나 숫자 등 다양할 수 있습니다.
+// 그런데 코틀린에서는 대입하는 모든 데이터의 타입이 선언되어 있어야 하는데, 어떻게 위의 예처럼arrayOf() 함수에 문자열과 숫자 등 서로 다른 데이터를 대입할 수 있을까? 그 이유는 arrayOf() 함수가 제네릭으로 선언되었기 때문
+
+// 제네릭에서 <T>로 선언된 것을 Type Parameter라 부른다 이용할 때 <Int>로 지정하는 것을 Type Argument라고 부른다.
+
+// 이해를 직관적으로 하기위해서 필자는 이를 '형식 타입'과'타입 지정'으로 부른다
+
+// 프로퍼티에 형식 타입인 T를 명시하면 될 것처럼 보이지만 위의 코드는 에러입니다. T라는 타입 혹은 클래스가 정의되지 않았다는 에러가 발생. 제네릭으로 형식 타입을 선언하려면 클래스 선언 부분에 <T>를 추가해야 한다.
+
+//소스_제네릭 선언 및 이용
+
+class MyClass<T> {
+    var info: T? = null
+}
+
+fun main39(args: Array<String>) {
+    val obj1 = MyClass<String>()
+    obj1.info = "hello"
+
+    val obj2 = MyClass<Int>()
+    obj2.info = 10
+}
+
+//소스 _ 타입 유추에 의한 제네릭 이용
+
+class MyClass2<T>(no: T) {
+    var info: T? = null
+}
+
+fun main40(args: Array<String>) {
+
+    val obj3 = MyClass2<Int>(10)
+    obj3.info = 20
+
+    val obj4 = MyClass2("hello")
+    obj4.info = "world"
+}
+
+//소스_형식 타입 문자
+
+class MyClass3<AA> {
+    var info: AA? = null
+}
+
+//여러 개의 형식 타입 선언
+
+class MyClass4<T, A> {
+    var info: T? = null
+    var data: A? = null
+}
+
+fun main41(args: Array<String>) {
+    val obj: MyClass4<String, Int> = MyClass4()
+    obj.info = "hello"
+    obj.data = 10
+}
+
+//함수와 프로퍼티의 제네릭
+
+// 지금까지 살펴본 내용은 클래스를 선언할 때 제네릭을 이용하여 형식 타입을 선언하고 클래스 내부의 프로퍼티에 선언된 형식 타입을 이용하는 방법이었다.
+
+// 그런데 제네릭은 함수를 선언할 때도 이용할 수 있다.
+
+//소스 _ 함수의 형식 타입
+
+class MyClass5<T, A> {
+    var info: T? = null
+    var data: A? = null
+
+    fun myFun(arg: T): A? {
+        return data
+    }
+}
+
+//소스 _ 최상위 레벨 함수에서의 제네릭
+
+fun <T> someFun(arg: T): T? {
+    return null
+}
+
+// 하지만 최상위 레벨에 선언하는 프로퍼티에는 형식 ㅏ입을 선언할 수 없으므로 제네릭을 사용할 수 없습니다.
+
+// 제네릭 제약
+
+// 타입 제약
+
+//제네릭 제약(Generic Constraing)이란, 제네릭을 이용할 때 특정 타입만 지정할 수 있도록 제약하는 것을 의미한다. 제네릭으로 선언된 클래스는 실제 이용하는 곳에서 아무 타입이나 지정해서 이용할 수 있다.
+
+// 그런데 때로는 특정 타입만 지정하도록 한정하고 싶을 때가 있다.
+
+//만약 String으로 지정하여 이용하면 클래스에서 수치 계산 작업이 불가능하다.
+
+// 이때는 지정할 수 있는 타입을 Number의 하위 타입으로 제한해야 한다.
+
+// 소스 _ 타입 제약
+
+class MathUtil<T : Number> {
+    fun plus(arg1: T, arg2: T): Double {
+        return arg1.toDouble() + arg2.toDouble()
+    }
+}
+
+// Variance
+
+// Variance란?
+
+// 제네릭에서 Variance(가변, 공변 등으로 해석되지만 이 책에서는 Variance로 칭한다.)란 타입과 관련된 이야기
+
+// 상하위 관계에서 타입 변경과 관련 있습니다. 우선 제네릭의 Variance를 이해하기 위해 클래스의 상하위 관계에 대해 살벼보자.
+
+// 소스 _ 상하위 클래스간 캐스팅
+
+open class Super10 {
+    open fun sayHello() {
+        println("i am super sayHello...")
+    }
+}
+
+class Sub10 : Super10() {
+    override fun sayHello() {
+        println("i am sub sayHello....")
+    }
+}
+
+fun main42(args: Array<String>) {
+    val obj: Super10 = Sub10()
+    obj.sayHello()
+
+    val obj2: Sub10 = obj as Sub10
+    obj2.sayHello()
+}
+
+//그렇다면 클래스의 상하위 관계에 의한 캐스팅이 제네릭에도 가능?
+
+open class Super11
+
+class Sub11 : Super11()
+
+class MyClass11<T>
+
+fun main43(args: Array<String>) {
+    val obj = MyClass11<Sub>()
+
+    /*val obj2: MyClass<Super> = obj*/ //여기가 에러가 나는 이유 Sub는 Super의 하위 클래스이지만 MyClass<Sub>는 MyClass<Super>의 하위 클래스가 아니기 때문
+}
+
+
+//convariance
+
+//out은 제네릭 형식 타입을 선언할 때 형식 타입명 앞에 추가하는 어노테이션입니다. 어노테이션이라고 해서 @를
+
+
+class MyClass12<T>(val data: T) {
+    fun myFun(): T {
+        return data
+    }
+
+    fun myFun2(arg: T) {
+
+    }
+
+    fun myFun3(arg: T): T {
+        return data;
+    }
+}
+
+fun some1(arg: MyClass12<in Int>) {
+    arg.myFun()
+    arg.myFun2(10)
+    arg.myFun3(10)
+}
+
+fun main44(args: Array<String>) {
+    some1(MyClass12<Int>(10))
+    some1(MyClass12<Number>(10))
+}
+
+fun copy(from: Array<Int>, to: Array<Int>) {
+    for (i in from.indices)
+        to[i] = from[i]
+}
+
+fun main45(args: Array<String>) {
+    val array1: Array<Int> = arrayOf(1, 2, 3)
+    val array2 = Array<Int>(3) { x -> 0 }
+    copy(array1, array2)
+    array2.forEach { println(it) }
+}
+
+//스타(*) 프로젝션
+
+//스타 프로젝션(Projection)이란 제네릭 타입을 <*>로 표현하는 것을 의미
+
+// 스타 프로젝션은 제네릭 타입을 모른다는 의미. 나중에 정확한 타입으로 이용되기는 하지만 지금은 어떤 제네릭 타입이 지정될지 모른다는 의미로 사용
+
+// 스타 프로젝션은 제네릭의 선언 측에서는 사용할 수 없으며 이요축에서만 사용할 수 있다.
+
+// 소스 _ as와 is
+
+fun some(arg: Any) {
+    if (arg is Int) {
+
+    }
+
+    val intVal = arg as Int
+    intVal.plus(10)
+}
+
+fun main46(args: Array<String>) {
+    some(10)
+    some("hello")
+}
+
+fun some3(arg: List<*>) {
+    val intList = arg as List<Int>
+    println(intList.sum())
+}
+
+fun main47(args: Array<String>) {
+    some3(listOf(10, 20))
+    some3(listOf("hello", "kkang"))
+}
+
+// 인라인 함수와 reified
+
+// 소스 _ inline과 refied 이용
+
+inline fun <reified T> some2(arg: Any) {
+    if (arg is T) {
+        println("true")
+    } else {
+        println("false")
+    }
+}
+
+fun main48(args: Array<String>) {
+    some2<String>("hello")
+    some2<Int>("hello")
+}
+
+//Unit 타입
+// 자바의 void와 Unit의 차이
+
+//Unit이 가장 많이 사용되는 곳은 함수의 반환 타입, 의미 있는 반환값이 없다는 의미이므로 자바의 void와 비슷하다고 이야기할 수 있다.
+
+//그래도 void와 Unit은 차이가 있다.
+
+// void는 함수의 반환값이 없다는 일종의 예약어
+
+// Unit은 타입이라는 점
+
+// 소스_타입으로서 Unit
+
+fun myFun1() {}
+fun myFun2(): Unit {}
+
+fun myFun3(): Unit {
+    return Unit
+}
+
+val myVal: Unit = Unit
+
+fun main49(args: Array<String>) {
+    println(myFun1())
+}
+
+//데이터 타입에는 데이터를 대입할 수 있다.
+
+//소스 _ 제네릭 타입으로 Unit 타입 활용
+
+interface MyInterface<T> {
+    fun myFun(): T
+}
+
+class Myclass6 : MyInterface<String> {
+    override fun myFun(): String {
+        return "hello"
+    }
+}
+
+class MyClass7 : MyInterface<Unit> {
+    override fun myFun() {
+
+    }
+}
+
+//함수의 반환 타입으로 Nothing 사용
+
+// null만 대입되는 의미 없는 타입을 사용할 일은 별로 많지 않을 것 같지만, 크게 두 가지 상황에 사용할 수 있습니다.
+
+// Unit 타입은 분명 함수의 반환이 있는 것이고 항상 kotlin, Unit을 반환한다. 그런데 Nothing은 함수의 반환값이 없거나 함수가 절대 반환하지 않는다는 것을 명시적으로 표현할 때 사용한다.
+
+//소스_함수의 반환 타입으로 Nothing사용
+
+fun myFun10(): Nothing {
+    while (true) {
+
+    }
+}
+
+fun myFun11(): Nothing? {
+    return null
+}
+
+fun myFun12(): Nothing {
+    throw Exception()
+}
+
+//제네릭에서 Nothing 타입 이용
+
+// 소스 _ Nothing 타입의 대입
+val myVal1: Nothing? = null
+
+val myVal2: Int? = myVal1
+val myVal3: String? = myVal1
+
+// 소스 _ 제네릭에서 Nothing 타입 사용
+
+class MyClass8<T>
+
+fun someFun(arg: MyClass8<in Nothing>) {}
+
+fun main50(args: Array<String>) {
+    someFun(MyClass8<Int>())
+    someFun(MyClass8<String>())
+}
+
+//리플렉션
+
+//리플렉션이란?
+
+//리플렉션(Reflection)은 사전적 의미로 투영, 반사라는 뜻,
+
+//어떤 함수를 정의하는데 함수의 매개변수로 클래스 타입을 선언하고 런타임 때 매개변수로 전달된 클래스의 이름, 클래스의 함수나 프로퍼티를 동적으로 판단하는 작업을 리플렉션이라고 한다.
+
+// 클래스 타입과 레퍼런스
+
+// 런타임 때 동적으로 클래스를 분석하려면 클래스에 대한 정보가 필요한데 이 클래스에 대한 정보를 클래스 레퍼런스라고 표현한다, 클래스 레퍼런스를 대입받는 곳은 클래스 타입으로 선언해야 한다.
+
+//소스_Kclass(*) 타입
+
+
+val myVal4: KClass<*> = String::class
+
+fun myFun(arg: KClass<*>) {
+
+}
+
+// 클래스 레퍼런스
+
+// 리플렉션은 클래스, 함수, 프로퍼티의 레퍼런스를 런타임 때 동적으로 분석하는 목적입니다. 따라서 레퍼런스를 분서갛기 위한 다양한 방법을 제공
+
+// 클래스 정보 분석
+
+
+open class MyClass9
+
+fun someFun1(arg: KClass<*>) {
+    println("class info.........")
+    println("isAbstreact : ${arg.isAbstract}")
+    println("isCompanion : ${arg.isCompanion}")
+    println("isData : ${arg.isData}")
+    println("isFinal : ${arg.isFinal}")
+    println("isInner : ${arg.isInner}")
+    println("isOpen : ${arg.isOpen}")
+    println("isSealed : ${arg.isSealed}")
+}
+
+fun main55(args: Array<String>) {
+    someFun1(MyClass9::class)
+}
+
+//생성자 분석
+
+//클래스 분석 중 클래스가 생성자를 포함하고 있는지, 생성자의 매개변수는 어떻게 선언되어 있는지도 중요한 분석 중 하나입니다. 클래스 레퍼런스에서 생성자 정보 분석은 다음의 프로퍼티를 이용
+
+// val constructors: Collection<KFunction<T>> 모든 생성자 정보
+// val <T : Any> KClass<T>.primaryConstructor: KFunction<T>? 주 생성자 정보
+
+
+open class MyClass10(no: Int) {
+    constructor(no: Int, name: String) : this(10) {}
+    constructor(no: Int, name: String, email: String) : this(10) {}
+}
+
+fun someFun(arg: KClass<*>) {
+    val constructors = arg.constructors
+    for (constructor in constructors) {
+        print("constructor.....")
+        val parameters = constructor.parameters
+        for (parameter in parameters) {
+            print("${parameter.name}: ${parameter.type} ..")
+        }
+        println()
+    }
+    print("primary constructor.....")
+    val primaryConstructor = arg.primaryConstructor
+    if (primaryConstructor != null) {
+        val parameters = primaryConstructor.parameters
+        for (parameter in parameters) {
+            print("${parameter.name}: ${parameter.type}")
+        }
+    }
+}
+
+fun main56(args: Array<String>) {
+    someFun(MyClass::class)
+}
+
+//클래스 프로퍼티 분석
+
+open class SuperClass {
+    val superVal: Int = 10
+}
+
+class MyClass13(val no: Int) : SuperClass() {
+    val myVal: String = "hello"
+
+    val String.someVal: String
+        get() = "world"
+}
+
+fun someFun13(arg: KClass<*>) {
+    val properties = arg.declaredMemberProperties
+    println("declaredMemberProperties")
+    for (property in properties) {
+        println("${property.name}: ${property.returnType} ..")
+    }
+    println("memberProperties.....")
+    val properties2 = arg.memberProperties
+    for (property in properties2) {
+        println("${property.name}: ${property.returnType} ..")
+    }
+
+    println("declaredMembetExtensionProperties")
+    val properties3 = arg.declaredMemberExtensionProperties
+    for (property in properties3) {
+        println("${property.name}: ${property.returnType} ..")
+    }
+}
+
+fun main57(args: Array<String>) {
+    someFun(MyClass::class)
+}
+
+
+val myVal9: Int = 3
+
+var myVar9: Int = 5
+
+class MyClass52 {
+    val objVal: Int = 10
+
+    var objVar: Int = 20
+}
+
+fun reflectionProperty(obj: Any?, arg: KProperty<*>) {
+    println("property name: ${arg.name}, property type: ${arg.returnType}")
+    if (obj != null) {
+        println(arg.getter.call(obj))
+    } else {
+        println(arg.getter.call())
+    }
+}
+
+fun reflectionMutableProperty(obj: Any?, arg: KMutableProperty<*>) {
+    println("property name: ${arg.name}, property type: ${arg.returnType}")
+    if (obj != null) {
+        arg.setter.call(obj, 40)
+        println(arg.getter.call(obj))
+    } else {
+        arg.setter.call(40)
+        println(arg.getter.call())
+    }
+}
+
+fun main52(args: Array<String>) {
+    reflectionProperty(null, ::myVal9)
+    reflectionMutableProperty(null, ::myVar9)
+
+    val obj: MyClass52 = MyClass52()
+    reflectionProperty(obj, MyClass52::objVal)
+    reflectionMutableProperty(obj, MyClass52::objVar)
+}
+
+
+// 소스_어노테이션 데이터 타입
+
+annotation class TestAnnotation1(val count: Int)
+
+annotation class TestAnnotation2(val otherAnn: TestAnnotation1, val arg1: KClass<*>)
+
+class User10
+/*
+annotation class TestAnnotation3(val user: User10) // <----- 에러*/
+
+@TestAnnotation1(10)
+@TestAnnotation2(TestAnnotation1(20), String::class)
+class Test {}
+
+const val myData: Int = 10
+
+@TestAnnotation1(myData)
+class Test2 {}
+
+annotation class TestAnnotation
+
+class Test3 {
+    @get:TestAnnotation
+    var no: Int = 10
+}
+
+// 이용 측 대상 적용
+
+annotation class TestAnnotation4
+
+annotation class TestAnnotation5
+
+class Test4 constructor(@param: TestAnnotation4 var email: String) {
+    @get:[TestAnnotation4 TestAnnotation5]
+    var no: Int = 10
+
+    @property: TestAnnotation4
+    var name: String = "kkang"
+
+    @field: TestAnnotation
+    var age: Int = 30
+
+    @setparam: TestAnnotation5
+    var phone: String = "0100000"
+}
+
+fun @receiver: TestAnnotation4 Test.myFun() {}
+
+/*
+@RxJava.JavaAnnotation @JavaAnnotation 이라고만 써져있다.{
+                                class Test { }
+class Test1 { }
+*/
+// 소스 _ 델리게이션 패턴
+
+class MyDelegatee {
+    fun print(str: String) {
+        println("i am delegate : $str")
+    }
+}
+
+class MyDelegator {
+    val delegatee: MyDelegatee = MyDelegatee()
+
+    fun print(str: String) {
+        delegatee.print(str)
+    }
+}
+
+fun main58(args: Array<String>) {
+    val obj: MyDelegator = MyDelegator()
+    obj.print("hello kkang")
+}
+//소스 _ by에 의한 위임 패턴
+
+interface Print {
+    fun print(arg: String)
+}
+
+class MyDelegatee2 : Print {
+    override fun print(arg: String) {
+        println("i am delegatee : $arg")
+    }
+}
+
+class MyDelegator2(obj2: MyDelegatee2) : Print by obj2
+
+fun main59(args: Array<String>) {
+    val obj2: MyDelegatee2 = MyDelegatee2()
+    MyDelegator2(obj2).print("hello kkang")
+}
+
+class Test7 {
+    var sum: Int = 0
+        get() = field
+        set(value) {
+            field = 0
+            for (i in 1 .. value) {
+                field = +i
+            }
+        }
+}
+
+fun main60(args: Array<String>){
+    val obj: Test7 = Test7()
+    obj.sum = 10
+    println(obj.sum)
+    obj.sum=5
+    println(obj.sum)
+}
+
+class MySumDelegate {
+    var result: Int = 0
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
+        println("getValue call...ref : $thisRef, property : '${property.name}'")
+        return result;
+    }
+
+    operator fun setValue(thisRef: Any?,property: KProperty<*>, value: Int){
+        result = 0
+        println("setValue call...value : $value, '${property.name}'")
+        for(i in 1..value) {
+            result += i
+        }
+    }
+}
+
+class Test8 {
+    var sum: Int by MySumDelegate()
+}
+
+fun main61(args: Array<String>){
+    val obj: Test8 = Test8()
+    obj.sum=10
+    println(obj.sum)
+    obj.sum = 5
+    println(obj.sum)
+}
+
+
+
+

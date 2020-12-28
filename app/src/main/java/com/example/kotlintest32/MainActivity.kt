@@ -1523,6 +1523,39 @@ fun main61(args: Array<String>){
     println(obj.sum)
 }
 
+// 타입 에일리어스
 
+// 타입 에일리어스(type alias)란 타입의 이름을 변경하는 방법을 이야기한다. 여기서 타입은 클래스명 혹은 인터페이스명을 가리킴 프로퍼티의 타입으로 지정할 수 있는 것에 대한 이름 변경을 제공한다는 의미이다.
+
+/*
+typealias MyInt = Int
+typealias MList<T> = MutableList<T>
+typealias MC = MyClass
+typealias MI = MyInterface
+
+interface MyInterFace
+class MyClass: MI
+
+fun main62(args: Array<String>){
+    val no: MyInt = 10
+    val list: MList<String> = mutableListOf("hello", "kkang")
+    val obj: MC = MC()
+}
+*/
+
+typealias MyType = (Int) -> Boolean
+val myFun: MyType = { it > 10 }
+
+//소스_inner 클래스 타입 재정의
+
+class Super12{
+    inner class Sub
+
+    fun getSubInsance(): MySub{
+        return Sub()
+    }
+}
+
+typealias MySub = Super12.Sub
 
 

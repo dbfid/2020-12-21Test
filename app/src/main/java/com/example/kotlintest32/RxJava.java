@@ -272,7 +272,7 @@ public class RxJava extends AppCompatActivity {
 
 // 메모리 내부 데이터
 
-public final class Person{
+final class Person{
     private final String name;
     private final Instant registered;
 
@@ -302,10 +302,10 @@ public final class Person{
 
     }
 
-    @Override
-    public int hashCode(){
-        return Objects.hash(name, registered);
-    }
+
+
+
+
 }
 
 

@@ -47,4 +47,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     compile "org.jetbrains.kotlin:kotlin-reflect"
+    compile 'org.slf4j:slf4j-api:1.7.30'
+    testCompile 'junit:junit:4.13.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.2.13'
 }

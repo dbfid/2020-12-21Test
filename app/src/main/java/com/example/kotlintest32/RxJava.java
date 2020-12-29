@@ -6,8 +6,10 @@ import android.os.Bundle;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.concurrent.Flow;
 
@@ -270,6 +272,40 @@ public class RxJava extends AppCompatActivity {
 
 // 메모리 내부 데이터
 
+public final class Person{
+    private final String name;
+    private final Instant registered;
 
+    public Person(String name, Instant registered){
+        this.name = name;
+        this.registered = registered;
+    }
+
+    public Person(String name){
+        this(name, Instant.now());
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public Instant getRegistered(){
+        return registered;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(name, person.name) && Objects.equals(registered, person.registered);
+
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(name, registered);
+    }
+}
 
 

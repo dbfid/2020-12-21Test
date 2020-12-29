@@ -1,7 +1,9 @@
 package com.example.kotlintest32
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -12,6 +14,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.declaredMemberExtensionProperties
 import kotlin.reflect.full.memberProperties
 import com.example.kotlintest32.RxJava
+import java.lang.Character.getName
 
 
 import kotlin.reflect.KMutableProperty
@@ -1558,4 +1561,317 @@ class Super12{
 
 typealias MySub = Super12.Sub
 
+// lateinit 키워드로 늦은 초기화
 
+// 초기화를 나중에 할 경우가 있다.
+
+// lazy로 늦은 초기화
+
+// lateinit이 var로 선언한 변수의 늦은 초기화라면 lazy는 값을 변경할 수 없는 val을 사용할 수 있습니다. val 선언 뒤에 by lazy 블록에 초기화에 필요한 코드를 작성한다.
+
+// 마지막 줄에는 초기화할 값을 작성한다. str이 처음 호출될 때 초기화 블록의 코드가 실행된다. println()메서드로 두 번 호출하면 처음에만 "초기화"가 출력된다.
+
+fun main63(args: Array<String>){
+    val str: String by lazy{
+        println("초기호")
+        "hello"
+    }
+
+    println(str)   // 초기화; hello
+    println(str) // hello
+}
+
+// lazy로 늦은 초기화를 하면 앱이 시작될 때 연산을 분산시킬 수 있어 빠른 실행에 도움이 된다.
+
+// lazy는 다음 조건에서만 사용가능
+
+// val에서만 사용가능하다
+
+// 조건이 적기 때문에 상대적으로 lateinit보다 편하게 사용할 수 있다.
+
+// null값이 아님을 보증(!!)
+
+// 변수 뒤에 !!를 추가하면 null값이 아님을 보증하게 된다. 다음과 같이 null값이 허용되는 name 변수의 경우 String? 타입이기 때문에 String 타입으로 변환하려면 !!를 붙여서 null값이 아님을 보증해야 합니다.
+
+val name: String = "키다리"
+
+val name2: String = name //에러
+val name3: String? = name // ok
+
+val name4: String = name!! // ok
+
+// 안전한 호출(?.)
+// 메서드 호출 시 점 연산자 대신 ?. 연산자를 사용하면 null값이 아닌 경우에만 호출된다. 다음 코드는 str 변수의 값이 null 값이 아니라면 대문자로 변경하고, null값이라면 null을 반환합니다.
+
+
+fun main64(args: Array<String>){
+
+    val str: String? = null
+
+    var upperCase = if (str != null) str else null // null
+    upperCase = str?.toUpperCase() // null
+}
+
+// 엘비스 연산자(?:)
+// 안전한 호출 시 null이 아닌 기본값을 반환하고 싶을 때는 엘비스 연산자를 함께 사용
+
+fun main65(args: Array<String>){
+    val str: String? = null
+
+    var upperCase = if (str != null) str else null // null
+    upperCase = str?.toUpperCase() ?: "초기화하시오" // 초기화하시오
+}
+
+//컬렉션
+//컬렉션은 개발에 유용한 자료구조를 말합니다. 안드로이드 개발에서도 리스트나 맵은 자주 사용되는 자료구조입니다.
+
+//리스트
+//리스트는 배열처럼 같은 자료형의 데이터들을 순서대로 가지고 있는 자료구조입니다. 중복된 아이템을 가질 수 있고 추가, 삭제, 교체 등이 쉽습니다.
+
+//맵
+
+// 맵은 키key와 값value의 쌍으로 이루어진 키가 중복될 수 없는 자료구조입니다.
+
+//읽기 전용 앱
+
+fun main66(args: Array<String>){
+   // 읽기 전용 맵
+    val map = mapOf("a" to 1, "b" to 2, "c" to 3)
+
+    // 변경 가능한 맵
+    val citiesMap = mutableMapOf("한국" to "서울", "일본" to "동경", "중국" to "북경")
+
+    // 요소에 덮어쓰기
+    citiesMap["한국"] = "서울특별시"
+    // 추가
+    citiesMap["미국"] = "워싱턴"
+
+    for((k, v) in map){
+        println("$k -> $v")
+    }
+}
+
+//맵 전체의 키와 값을 탐색할 때는 다음과 같이 간단히 탐색할 수 있다.
+
+// 맵의 키와 값을 탐색
+fun main67(args: Array<String>){
+    // 읽기 전용 집합
+    val cityset = setOf("서울", "수원", "부산")
+
+    // 수정 가능한 집합
+    val citySet2 = mutableSetOf("서울", "수원", "부산")
+    citySet2.add("안양") // [서울, 수언, 부산, 안양]
+    citySet2.remove("수원") // [서울, 부산, 안양]
+
+    // 집합의 크기
+    println(citySet2.size) //3
+    // '서울'이 집합에 포함되었는지
+    println(citySet2.contains("서울")) // true
+}
+
+// 람다식
+
+// 람다식은 하나의 함수를 표현하는 방법 익명 클래스나 익명 함수를 간결하게 포현할 수 있어서 매우 유용하다
+
+// 람다식은 코드를 간결하게 해주는 장점이 있지만 디버깅이 어렵고 남발할 경우 오히려 코드 가독성이 떨어진다.
+
+// 먼저 두 수를 인수로 받아서 더해주는 add() 메서드입니다.
+
+fun add(x: Int, y: Int): Int{
+    return x + y
+}
+
+fun add2(x: Int, y: Int) = x + y
+
+//람다식을 변수에 저장할 수 있고 이러한 변수는 일반 함수처럼 사용할 수 있다.
+
+// { 인수1: 타입1, 인수2: 타입2 -> 본문}
+fun main68(args: Array<String>){
+    var add = {x: Int, y: Int -> x + y}
+
+    println(add(2,5)) //?
+}
+
+// SAM 변환
+
+// 코틀린에서는 추상 메서드 하나를 인수로 사용할 때는 함수를 인수로 전달하면 편합니다. 자바로 작성된 메서드가 하나인 인터페이스를 구현할 때는 대신 함수를 작성할 수 있다.
+
+// 이를 SAM(Single Abstract Method)변환이라고 한다.
+
+// SAM 변환의 예를 안드로이드에서 들어보겠다. 안드로이드에서는 버튼의 클릭 이벤트를 구현할 때 onClick() 추상 메서드만을 가지는 View.OnClickListener 인터페이스를 구현합니다.
+
+// 기타기능
+
+// 다음과 같은 기타 유용한 기능에 대해 간단히 살펴보겠다.
+
+// 확장 함수 : 원래 있던 클래스에 기능을 추가하는 함수
+
+// 형변환 : 숫자형 자료형끼리 쉽게 형변환 기능
+
+// 형 체크 : 변수의 형이 무엇인지 검사하는 기능
+
+// 고차 함수 : 인자로 함수를 전달하는 기능
+
+// 동반 객체 : 클래스의 인스턴스 생성 없이 사용할 수 있는 객체
+
+// let() 함수 : 블록에 자기 자신을 전달하고 수행된 결과를 반환하는 함수
+
+// with() 함수 : 인자로 객체를 받고 블록에서 수행된 결과를 반환하는 함수
+
+// apply() 함수 : 블록에 자기 자신을 전달하고 이 객체를 반환하는 함수
+
+// run() 함수 : 익명함수처럼 사용하거나, 블록에 자기 자신을 전달하고 수행된 결과를 반환하는 함수
+
+// 확장 함수
+
+// 코틀린은 확장 함수 기능을 사용하여 쉽게 기존 클래스에 함수를 추가할 수 있다. 확장 함수를 추가할 클래스에 점을
+
+// 찍고 함수 이름을 작성합니다. 확장 함수 내부에서는 이 객체를 this로 접근할 수 있고 이러한 객체를 리시버 객체라고 한다.
+
+// 다음은 Int 자료형에 짝수인지 아닌지를 알 수 있도록 isEven() 확장 함수를 추가한 예입니다.
+
+fun main70(args: Array<String>){
+    fun Int.isEven() = this % 2 == 0
+
+    val a = 5
+    val b = 6
+
+    println(a.isEven()) // false
+    println(b.isEven()) // true
+}
+
+//형변환
+
+// 숫자형 자료형끼리는 to자료형() 메서드를 사용하여 형변환이 가능하다.
+
+fun main71(args: Array<String>){
+    val a = 10L
+    val b = 20
+
+    val c = a.toInt() // Long을 Int로
+    val d = b.toDouble() // Int를 Double로
+    val e = a.toString() // Long을 String으로
+}
+
+// 숫자 형태의 문자열을 숫자로 바꿀 대는 자바와 마찬가지로 Integer.parseInt() 메서드를 사용합니다.
+
+fun main72(args: Array<String>){
+    val intStr = "10"
+    val str = Integer.parseInt(intStr)
+}
+
+// 일반 클래스 간에 형변환을 하려면 as 키워드를 사용합니다.
+
+fun main73(args: Array<String>){
+    open class Animal
+
+    class Dog: Animal()
+
+    val dog = Dog()
+
+    val animal = dog as Animal
+}
+
+// 형 체크
+
+// is 키워드를 사용하여 형을 체크할 수 있다. 자바의 instanceOf에 대응합니다.
+
+fun main74(args: Array<String>){
+    val str = "hello"
+
+    if (str is String){ // str이 String형이라면
+        println(str.toUpperCase())
+    }
+}
+
+//고차 함수
+
+//코틀린에서는 함수의 인수로 함수를 전달하거나 함수를 변환할 수 있다. 이렇게 다른 함수를 인수로 받거나 반환하는 함수를 고차 함수(higher-order function, 고계 함수)라고 한다.
+
+// 인수 : 숫자, 숫자, 하나의 숫자를 인수로 하는 반환값이 없는 함수
+fun main75(args: Array<String>){
+    fun add(x: Int, y: Int, callback: (sum: Int) -> Unit){
+        callback(x + y)
+    }
+
+//함수는 {}로 감싸고 내부에서는 반환값을 it로 접근할 수 있음
+    add(5, 3, {println(it)}) // 8
+}
+
+// 동반 객체
+
+// 안드로이드 프로그먼트 컴포넌트를 다룰 때 자동으로 동반 객체 코드가 생성된다. 그대 코드를 이해할 수 있도록 동반 객체를 간단히 알아보겠다.
+
+class Fragment{
+    companion object{
+        fun newInstance() {
+            println("생성됨")
+        }
+    }
+}
+
+val fragement = Fragment.newInstance()
+
+//let() 함수
+
+//코틀린 기본 라이브러리는 몇 가지 유용한 함수를 제공합니다. let() 함수는 블록에 자기 자신을 인수로 전달하고 수행된 결과를 반환한다. 인수로 전달한 객체는 it으로 참조. let()함수는 안전한 호출 연산자?.와 함께 사용하면 null값이 아닐 때만 실행하는 코드를 다음과 같이 나타낼 수 있다.
+
+// fun <T, R> T.let(block: (T) -> R): R
+/*
+fun main76(args: Array<String>){
+    val result = str?.let{
+        Integer.parseInt(it)
+    }
+}
+*/
+
+//str이 null이 아닐 때만 정수로 변경하여 출력하는 코드입니다. 복잡한 if문을 대체 할 수 있습니다.
+
+// with() 함수
+
+// with() 함수는 인수로 객체를 받고 블록에 리시버 객체로 전달합니다. 그리고 수행된 결과를 반환한다. 리시버 객체는 this로 접근할 수 있다. this는 생략이 가능하므로 다음과 같이 작성 가능 안전한 호출이 불가능하여 str이 null값이 아닌 경우에만 사용해야 한다.
+
+// fun <T, R> with(receiver: T, block T.() -> R): R
+
+// apply()함수
+
+// 참조 투명성
+
+// 상태 변이 공유의 캡슐화
+
+// 제어 프름과 제어 구조 추상화
+
+// 올바른 타입의 사용
+
+// 제어 흐름과 제어 구조 추상화
+
+// 올바른 타입의 사용
+
+//버그를 자주 일으키는 다른 근원으로 널(null) 참조가 있다.
+
+// 코틀린을 사용하면 널 참조를 허용하는 코드와 널 참조를 금지하는 코드를 명확하게 분리할 수 있다.
+
+// 하지만 궁극적으로 프로그램에서 널 참조를 아예 사용하지 못하게 막는 일은 개발자 몫이다.
+
+// 외부 세계에 의존하는 프로그램을 제대로 실행하려고 노력하는 과정에서 많은 버그가 발생
+
+// 코틀린은 두 값을 표현하는 Pair 외에 세 값을 표현하는 Triple이라는 클래스도 제공한다.
+
+// 자바 같은 언어에 Pair나 Triple 같은 클래스가 있다면 유용할 것이다. 왜냐하면 Purchase와 같은 클래스를 정의하려면 생성자(constructor)
+
+// 끝까지 추상화하기
+
+
+// 지금까지 본 것처럼 부수 효과가 없는 순수 함수(pure function)를 합성하면 테스트하기 쉬운 더 안전한 프로그램을 작성할 수 있다.
+
+// 클래스와 인터페이스
+
+// 코틀린 클래스는 자바와 상당히 다른 구문을 사용한다
+
+// 데이터 객체 구조 분해하기
+
+// 프로퍼티가 N개 있는 데이터 클래스에는 component1부터
+
+// 유틸리티 클래스 인스턴스화 방지하기
+
+// 중위(infix) 확장 함수를 호출한다. 코틀린에서는 List를 확장하는 Collection 인터페이스 안에 plus 정의가 들어 있다. 확장 함수는 인자를 받아 새 리스트를 만드는 정적 함수로 컴파일된다. + 연산자를 가변 리스트에 사용할 수도 있지만, +를 사용하면 불변 리스트와 같은 결과를 돌려받게 되며, 원래의 가변 리스트는 변하지 않고 그대로 남는다.

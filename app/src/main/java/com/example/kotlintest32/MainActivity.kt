@@ -14,7 +14,9 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.declaredMemberExtensionProperties
 import kotlin.reflect.full.memberProperties
 import com.example.kotlintest32.RxJava
+import java.io.File
 import java.lang.Character.getName
+
 
 
 import kotlin.reflect.KMutableProperty
@@ -1938,4 +1940,138 @@ val product = ints.product()
 
 
 // 조건 선택 사용하기
+
+// 자바에서는 if ... else 구문은 제어 구조를 만들어낸다. if ... else는 조건을 검사해 조건이 성립하는지 여부에 따라 프로그램이 두 명령 블록 중 한쪽으로 흘러가게 한다. 다음은 간단한 자바 예제다.
+
+// 다중 조건 선택 사용하기
+
+// 조건 분기가 3개 이상 있으면 자바에서는 switch ... case 구조를 사용한다. 정숫값, 이넘(enum), 문자열 값에 이를 사용할 수 있다.
+
+// 코틀린에서는 when 구문을 사용한다 when 구문은 제어 구문이 아니라 식이다.
+/*
+fun main80(args: Array<String>){
+    val country = ...
+
+    val capital = when (country){
+        "Australia" -> "Canberra"
+        "Bolivia" -> "Sucre"
+        "Brazil" -> "Brasilia"
+        else -> "Unknown"
+    }
+}
+*/
+
+fun main81(args: Array<String>){
+    val num: Int = try{
+        args[0].toInt()
+    }catch(e: Exception){
+        0
+    }finally{
+        // 이 블록 안에 있는 코드는 항상 실행됨
+    }
+}
+
+// 이미 if ... else에서 본 것처럼 각 블록이 반환하는 값은 블록의 마지막 줄을 평가한 값이다. if ... else와의 차이는 try ... catch ... finally에서는 중괄화({})가 필수라는 점에 있다. try ... catch ...finally가 반환하는 값은 예외가 발생하지않으면 try 블록의 마지막 줄을 평가한 값이고, 예외가 발생하면 catch 블록의 마지막 줄을 평가한 값이다.
+
+// 사용자 자원 자동으로 닫기
+
+// 자바에서 자원을 사용하는 try로 할 수 있는 것처럼 코틀린도 자원을 자동으로 닫을 수 있다. 이때 자원은 Closable이나 AutoClosable 중 하나를 구현해야 한다. 자바와 코틀린의 가장 큰 차이는 코틀린에서는 use라는 함수를 사용한다는 점이다.
+
+fun main82(args: Array<String>){
+    File("myFile.txt").inputStream().use{
+    it.bufferedReader()
+        .lineSequence()
+        .forEach (::println)
+    }
+}
+
+
+//이 코드는 단지 자동으로 닫을 수 있는 자원을 어떻게 처리하는지 보여주는 예제일 뿐이다. 자원 처리르 제외하면 코드 자체는 그리 흥미로운 부분이 없다.
+
+//lineSequence 함수는 Sequence를 반환 하는데 이는 지연 계산 컬렉션이다. 지연(lazy) 계산이란 말은 계산(파일에서 매 줄을 읽어오기)이 나중에 실제 각 줄을 사용할 때 이뤄진다는 뜻이다. 여기서는 시퀀스 안의 각 줄이 실제 사용될 때 (forEach에 의해 각 줄을 출력할 때) 계산이 이뤄진다.
+
+//use 함수 블록을 벗어나면 입력 스트림이 자동으로 닫혀야 하기 때문에 더 이상 스트림을 쓸 수 없다. 따라서 다음 예제와 같이 lineSequence로 시퀀스를 만들고 use 블록의 밖에서 이 시퀀스를 사용하는 코드는 컴파일은 되지만 실행 시점에 IOExceptionL Stream Closed 오류가 발생한다.
+fun main83(args: Array<String>){
+    val lines: Sequence<String> = File("myFile.txt")
+        .inputStream()
+        .use {
+            it.bufferedReader()
+                .lineSequence()
+        }
+    lines.forEach (::println)
+}
+
+fun main84(args: Array<String>){
+    val lines: List<String> = File("myFile.txt")
+        .inputStream()
+        .use {
+            it.bufferedReader()
+                .lineSequence()
+                .toList()
+        }
+    lines.forEach(::println)
+}
+
+// 이렇게 처리하면 파일 전체를 메모리에 저장한다는 문제가 있다. 파일을 한 줄씩 처리하고 싶다면 좀 더 단순한 방법으로 forEachLine 함수를 사용하면 된다.
+
+// File("myFile.txt").forEachLine{println(it)}
+
+// Sequence를 반환하는 useLines를 쓰는 방법도 있다. useLines를 써서 앞의 예제와 동일한 코드를 만들면
+
+// File("myFile.txt").useLines{it.forEach(::println)}
+
+// 이런 느낌으롬 만드는게 가능하다.
+
+// 스마트 캐스트
+
+// 자바에서는 참조를 다른 타입으로 강제 타입 변환(cast)해야 할 때가 가끔 있다 .참조 대상 객체가 지정한 타입으로 변환이 불가능한 타입의 객체라면 ClassCastException이 발생한다. 따라서 항상 instanceof 연산자로 먼저 타입 변환이 가능한지 검사해야 한다.
+
+
+// 스마트 캐스트
+/*fun main85(args: Array<String>){
+    val payload: Any = message.payload
+
+    val length: Int = if (payload is String)
+        payload.length
+    else
+        -1
+}
+
+fun main86(args: Array<String>){
+    val result: Int = when (payload){
+        is String -> payload.length
+        is Int -> payload
+        else -> -1
+    }
+}*/
+
+// 동등성과 동일성
+
+//자바에서 빠지기 쉬운 함정은 하나는 동등성(equality)과 동일성(identity)을 혼동하는 것이다.
+
+//자바 원시 타입이나 문자열 인터닝(interning), Integer를 자바에서 처리하는 방식 때문에 이런 문제가 더 복잡해진다.
+
+// 문자열 인터폴레이션
+
+// 코틀린은 자바보다 훨씬 간단한 구문으로 문자열과 값을 혼용할 수 있게 한다.
+
+
+//자바 String.format() 메서드를 사용했을때
+
+//System.out.println(String.format("$s"s registration date: %s", name, date));
+
+//코틀린에서
+
+//println("$name's registration date: $date")
+
+//문자열 안에 식을 넣을 수도 있다. 다만, 중괄화({})로 식을 둘러싸야 한다.
+//println("$name's registration date: ${date.atZone(ZoneId.of("America/Los_Angeles"))}")
+
+//이런 기법을 문자열 인터폴레이션(string interpolation)이라고 부른다. 문자열 인터폴레이션을 사용하면 문자열을 더 쉽게 처리할 수 있고 코트를 더 읽기 좋게 만들 수 있다.
+
+// 여러 줄 문자열
+
+// 코틀린에서는 3중 따움표(""")를 사용해 여러 줄로 이뤄진 문자열도 쉽게 사용할 수 있다. 이때 trimMargin 함수를 활용하면 좀 더 편리하다.
+
+//println("""This is the first line |and this is the second one.""".trimMargin())
 

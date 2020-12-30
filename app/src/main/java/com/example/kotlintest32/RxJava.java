@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import io.reactivex.Scheduler;
 import io.reactivex.internal.operators.observable.ObservableError;
 import kotlin.Function;
 import kotlin.jvm.functions.Function1;
@@ -27,6 +28,8 @@ public class RxJava extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rx_java);
+
+
 
     }
     // 리액티브 프로그래밍은 데이터가 통지될 때마다 관련 프로그램이 반응(reaction)해 데이터를 처리하는 프로그래밍 방식

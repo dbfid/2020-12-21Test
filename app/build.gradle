@@ -3,20 +3,26 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
+
+    id "me.tatarka.retrolambda" version "3.4.0"
 }
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
-
     defaultConfig {
         applicationId "com.example.kotlintest32"
         minSdkVersion 28
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    packagingOptions{
+        exclude 'META-INF/rxjava.properties'
     }
 
     buildTypes {
@@ -50,4 +56,20 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.30'
     testCompile 'junit:junit:4.13.1'
     compile 'io.reactivex.rxjava2:rxjava:2.2.13'
+
+    compile 'io.reactiveex.rsjava2:rxjava:2.0.3'
+    compile 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewhartonLbutterknife-compiler:8.4.0'
+
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:2.0.0'
+
+    compile 'com.android.supprt:cardview-v7:25.1.0'
+    compile 'com/android.support:recyclerview-v7:25.1.0'
+
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.13'
+    compile group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.1.1'
+
+    compile "com.github.akarnokd:rxjava2-interop:0.8.1"
 }

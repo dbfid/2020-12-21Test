@@ -35,6 +35,11 @@ class MainActivity : AppCompatActivity() {
             .load("https://www.verdict.co.uk/wp-content/uploads/2017/09/giphy-downsized-large.gif")
             .apply(RequestOptions.centerCropTransform())
             .into(imageView)
+
+        Glide.with(this)
+            .load("https://t1.daumcdn.net/cfile/tistory/99555E4B5CAE56670E")
+            .apply(RequestOptions.centerCropTransform())
+            .into(imageView2)
     }
 
     //코틀린에서는 일반적으로 데이터 타입을 선언할 때 x1:Int형태로 콜론 ( : )을 기준으로 왼쪽에 변수명과 오른쪽에 타입을 명시

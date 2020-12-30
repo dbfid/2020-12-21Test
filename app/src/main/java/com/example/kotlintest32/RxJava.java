@@ -10,9 +10,12 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Observable;
 import java.util.concurrent.Flow;
+import java.util.function.Consumer;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.internal.operators.observable.ObservableError;
 import kotlin.Function;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
@@ -24,6 +27,7 @@ public class RxJava extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rx_java);
+
     }
     // 리액티브 프로그래밍은 데이터가 통지될 때마다 관련 프로그램이 반응(reaction)해 데이터를 처리하는 프로그래밍 방식
 
@@ -302,7 +306,20 @@ final class Person{
 
     }
 
-
+    /*Observable<Integer> source =
+            Observable.create((ObservableEmitter<Integer> emitter) -> {
+                emitter.onNext(100);
+                emitter.onNext(200);
+                emitter.onNext(300);
+                emitter.onComplete();
+            });
+    source.subscribe(new Consumer<Integer>(){
+       @Override
+       public void accept(Integer data) throws Exception{
+           System.out.println("Result : " + data);
+        }
+    });
+*/
 
 
 

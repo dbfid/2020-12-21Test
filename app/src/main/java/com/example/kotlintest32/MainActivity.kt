@@ -16,12 +16,14 @@ import kotlin.reflect.full.memberProperties
 import com.example.kotlintest32.RxJava
 import java.io.File
 import java.lang.Character.getName
-
+import java.lang.IllegalStateException
 
 
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
+
+open class MyClassParent
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +45,28 @@ class MainActivity : AppCompatActivity() {
             .apply(RequestOptions.centerCropTransform())
             .into(imageView2)
     }
+
+    /*interface Bag<out T>{
+        fun get(): T
+    }
+
+    class BagImp1 : Bag<RxJava>{
+        override fun get(): RxJava = RxJava()
+    }
+
+    val bag: Bag<MyClassParent> = BagImp1()
+
+    interface Bag2<in T>{
+        fun use(t: T): Boolean
+    }
+
+    class BagImp2 : Bag<MyClassParent>{
+        override fun use(t: MyClassParent): Boolean = true
+    }
+
+    val bag2: Bag<MyClass> = BagImp2*/
+
+
 
     //코틀린에서는 일반적으로 데이터 타입을 선언할 때 x1:Int형태로 콜론 ( : )을 기준으로 왼쪽에 변수명과 오른쪽에 타입을 명시
 
@@ -2078,4 +2102,195 @@ fun main86(args: Array<String>){
 // 서비스 팩토리
 
 // 인터셉터Interceptor를 준비
+
+
+//동등성과 동일성
+
+//자바에서 빠지기 쉬운 함정의 하나는 동등성(equality)와 동일성(identity)을 혼동하는 것이다.
+//자바 원시 타입이나 문자열 인터닝(interning), Integer를 자바에서 처리하는 방식 때문에 이런 문제가 더 복잡해진다.
+
+//객체에서는 동일성을 계산한다. 동등성, 즉 구조 동등성은 ==로 검사하며, equal와 ==는 같다. 동등성 검사(==)가 동일성 검사(===)보다 더 짧기 때문에 많은 실수를 방지할 수 있다. ==와 ===를 각각 !=와 !==로 부정할 수 있다.
+
+//문자열 인터폴레이션
+fun main85(args: Array<String>){
+    println("""This is the first line | and this is the second one.""".trimMargin())
+}
+
+// trimMargin 함수는 파라미터로 문자열을 받는다. 이 문자열을 정렬에 사용할 위치를 지정할 때 사용한다. 앞의 코드를 보면 알 수 있듯이 기본 값은 '|'다
+
+// 변성: 파라미터화한 타입과 하위 타입
+
+// 변성(variance)은 파라미터화한 타입이 서로 어떤 하위 타입 관계에 있는지 결정하는 방식을 뜻함
+
+// val ls = listOf("A String")
+// val la = ls + 42 // <--- 코틀린은 'la'의 타입을 'List<Any>로 추론함'
+
+//자바에서는 파라미터화한 타입이 파라미터 타입에 대해 무공변성이다. 즉, A가 B의 부모 타입이라 하더라도
+
+//String 타입의 elem이 List<Any>에 추가될 수 있다, 그렇게 해도 아무 문제가 없다.
+
+/*fun <T> addAll(list1: MutableList<T>,
+               list2: MutableList<out T>){ // <--- T를 공변성으로 만듦
+    for(elem in list2) list1.add(elem)
+}
+
+val ls = mutableListOf("A String")
+val la: MutableList<Any> = mutableListOf()
+addAll(la, ls)
+        */
+
+// out키워드는 list2 파라미터가 T 타입에 대해 공변성적임을 표시한다.
+
+// 사용 지점 변성과 선언 지점 변성성
+
+// 앞에서 본 선언 지점 변성()
+
+//여기서 컴파일러 오류가 발생하는 이유는 useBag이 Bag
+
+// 코틀린 역함수
+
+// 함수에 역함수
+
+// 정의역에 있는 원소 중에서 공역에 대응하는 원소가 없는 원소는 있을 수 없다.
+
+// 공역에 있는 원소 중에서 어느 두(또는 그 이상의) 원소가 정의역에 있는 한 원소에 대응할수는 없다.
+
+// 공역에 있는 원소 중에는 정의역에 있는 원소에 대응하지 않는 원소가 있을 수 있다.
+
+// 공역에 있는 원소 중에는 하나 이상의 정의역 원소에 대응하는 원소가 있을 수 있다.
+
+// 공역에 있는 원소 중에서 대응하는 정의역 원소가 있는 원소들만으로 이루어진 집합을 치역(image)이라고 부른다.
+
+// f(x) = X + 1
+
+// 여기서 X는 양의 정수다. 이 함수는 각 정수와 그 자신의 다음 값(successor)을 대응시킨다. 이 함수에 어떤이름이든 붙일 수 있다. 특히 다음처럼 함수가 하는 일을 기억하기 좋게 이름을 붙일 수 있다.
+
+// 여기서 함수가 어떤 동작을 하는지가 아닌 어떤 것인지(정의)를 이야기하고 있음에 유의
+
+// successor 함수는 인자로 받은 x에 1을 더하지 않는다.여러분은 다음값을 계산하기 위해 정숫값에 1을 더할 수 있다. 하지만 successor 함수는 이런 계산을 수행하지 않는다.
+
+// 부분 함수 다루기
+
+// 합성 합수 이해하기
+
+// 함수는 서로 합성해서 다른 함수를 만들어낼 수 있는 빌딩 블록이다.
+
+// 인자를 여럿 받는 함수
+
+// 함수를 데이터로 이해하기
+
+// 함수는 데이터와 비슷하다. String이나 Int 등의 타입이 있는 다른 데이터와 마찬가지로 함수도 타입이 있다. 그리고 다른 데이터와 마찬가지로 함수도 참조에 대입할 수 있다. 조금 뒤에 보겠지만 함수를 다른 함수에 인자로 넘길 수 있고, 함수가 함수를 반환할 수 있다.
+
+// 다만(자바 메서드와 마찬가지로) fun으로 정의한 함수는 이런 방식으로는 조작할 수 없다. 하지만 코틀린은 이런 메서드를 진짜 함수로 변환할 때 필요한 모든 메커니즘을 제공한다.
+
+// 데이터를 함수로 이해하기
+
+fun append(i: Int, list: MutableList<Int>): List<Int>{
+    list.add(i)
+    return list
+}
+
+fun append2(i: Int, list: List<Int>) = list + i
+
+//하지만 실제로는 그렇지 않다. list + i라는 식은 list의 모든 원소가 같은 순서로 있고 맨 뒤에 i가 더 들어 있는 새로운 (불변)리스트를 만들어낸다. 아무것도 변이된 것이 없다. 따라서 append2는 순수 함수다.
+
+// 객체 표기법과 함수 표기법 비교
+
+// (동반 객체에 들어가는 함수를 자바의 정적 메서드와 같다고 봐도 된다.)
+
+// 아예 어느 클래스에도 속하지 않도록 패키지 수준에 넣어도 된다. 그리고 클래스 인스턴스를 명시적으로 파라미터로 받게 만들면 클래스 인스턴스의 프로퍼티에 접근하는 함수를 동반 객체나 패키지 수준에 넣을 수 있다.
+/*open class Payment{
+    var creditCard = 0
+
+    fun combine(payment1 : Payment, payment2: Payment): Payment=
+        if(payment1.creditCard, patment1.amount + payment2.amount){
+           Payment(payment1.creditCard, payment1.amout)
+        }else{
+            throw IllegalStateException("Cards don't match")
+        }
+
+
+}*/
+
+// 함수를 사용하려면 this 참조를 넘겨야 한다.
+
+
+
+// 함수 값 사용하기
+// 함수를 데이터처럼 다룰 수 있지만 fun으로 정의된 함수는 그렇지 않다.
+
+// 코틀린은 함수를 데이터처럼 다룰 수 있어야 한다.
+
+// 코틀린에는 함수 타입이 있으며, 일반적인 데이터를 그 데이터의 타입과 일치하는 참조에 대입할 수 있는 것처럼 함수를 그 함수와 일치하는 타입의 참조에 대입할 수 있다.
+
+fun double(x: Int): Int = x * 2
+
+val double: (Int) -> Int = {x -> x * 2}
+
+// 함수 값 사용하기
+
+// 앞에서 함수를 데이터처럼 다룰 수 있지만 fun으로 정의된 함수는 그렇지 않다고 말했다.
+
+// 코틀린은 함수를 데이터처럼 다룰 수 있게 한다. 코틀린에는 함수 타입이 있으며, 일반적인 데이터를 그 데이터의 타입과 일치하는 참조에 대입할 수 있는 것처럼 함수를 그 함수와 일치하는 타입의 참조에 대입할 수 있다.
+
+// 여기서 double 함수의 타입은 (Int) -> Int다. 화살표의 왼쪽에는 파라미터 타입을 괄호로 둘러싸서 표시한다. 반환 타입은 화살표 오른쪽에 위치한다. 함수 정의는 등호 뒤에 온다. 이때 함수 정의를 중괄화({})로 둘러싼 람다 식 형태를 사용한다.
+
+// 이 예제에서 람다는 파라미터 해당하는 이름(x)
+
+// 함수를 사용하려면 this 참조를 넘겨야 한다.
+
+// 함수 타입에서 인자는 괄호 안에 들어 있다. 반면 람다 식에서 파라미터 주변에는 괄호를 쓸 수 없다.
+
+// 파라미터가 튜플이 아니라면(더 정확히 말해 파라미터가 원소가 1개뿐인 튜플인 경우), it이라는 특별한 이름을 사용해 그 파라미터를 가리킬 수 있다.
+
+fun main90(args: Array<String>){
+    val double: (Int) -> Int = {it * 2}
+}
+
+// it을 사용하면 더 간결하게 람다 식을 쓸 수 있지만, 때로 코드 읽기가 더 어려줘일 수 있다. 특히 여러 함수 구현의 내포 깊이가 깊어지면 더 그렇다.
+
+// 이 예제에서 double은 함수 이름이 아니다.
+
+// val number: Int = 5
+
+// 라고 쓸 때, 이는 5의 이름이 number이라고 쓴 것은 아니다. 함수에서도 마찬가지
+
+// 코틀린에 함수가 두 종류나 있는 이유가 궁금한 독자도 있을 것이다. 함수가값이라면 굳이 fun을 사용해 함수를 정희해야 하는 이유가 무엇일까?
+
+// 메서드, 하위 프로그램, 프러시저 등으로 부를 수 있다. fun으로 정의한 함수로 (항상 인자에 의해서만 값이 정해지고 외부에서 관찰할 수 있는 효과가 없는) 순수 함수를 표현할 수 있지만, 이를 데이터처럼 취급할 수는 없다.
+
+// fun함수가 더 효율적이기 때문. 이를 최적화로 볼 수 있다. 인자를 넘기고 그 인자에 따른 반환 값을 얻는 일만 하는 경우에는 fun으로 정의한 함수를 사용하라.
+
+// 꼭 fun으로 정의한 함수를 사용할 필요는 없지만 사용하는 편이 더 낫다.
+
+// 한편 함수를 데이터처럼 취급해야 하거나(예를 들어 곧 보게 되겠지만 다른 함수에 함수를 인자로 넘겨야 한다면) 함수에서 함수를 돌려줘야 하는 경우이거나 변수, 맵 그 밖의 데이터 구조에 함수를 저장해야 하는 경우라면 함수 타입의 식을 사용하라.
+
+// 한 유형의 함수를 다른 유형의 함수로 변환하는 방법이 궁금할 것이다. 변환은 아주 간단하다. 다만 실행 시점에 fun 함수를 만들 수는 없기 때문에 fun 함수를 함수식 유형의 값으로 변환할 수만있다.
+
+// 함수 참조 사용하기
+
+// 코틀린은 자바와 같은 방식으로 메서드 참조를 사용할 수 있다. 그런데 코틀린에서는 메서드를 함수라고 부르기 때문에 메서드 참조도 함수 참조라고 부른다. 다음은 fun 함수를 람다 안에서 사용하는 코드를 보여준다.
+fun main91(args: Array<String>){
+    fun double(n: Int): Int = n * 2
+    val mutliplyBy2: (Int) -> Int = {n -> double(n)} // -> 이렇게 쓸수도 있고
+    // 혹은 val mutliplyBy2: (Int) -> Int = {double(it)}
+
+    // 함수 참조를 사용하면 같은 구문을 더 간단히 쓸 수 있다.
+
+    // val mutliplyBy2: (Int) -> Int = ::double
+
+    // 여기서 multiplyBy2 함수가 들어 있는 객체나 클래스, 패키지에 들어 있는 double 함수가 호출된다.
+}
+
+class MyClassStudy{
+    fun double(n: Int): Int = n * 2
+}
+
+val foo = MyClassStudy()
+val mutliplyBy2: (Int) -> Int = foo::double
+
+// double이 다른 패키지에 들어 있다면 이를 임포트해야한다.
+
+
+
 

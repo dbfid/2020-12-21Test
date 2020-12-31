@@ -1,9 +1,17 @@
 package com.example.kotlintest32;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
+import com.pushtorefresh.storio.sqlite.StorIOSQLite;
+import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
+import com.pushtorefresh.storio.sqlite.operations.put.DefaultPutResolver;
+
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -31,6 +39,8 @@ import static hu.akarnokd.rxjava.interop.RxJavaInterop.*;
 /*import rx.Observable;*/ //  위에있는 옵저버플을 이줄처럼 사용하느것도 가능하다.
 
 public class RxJava extends AppCompatActivity {
+
+    private static Object SQLiteTypeMapping;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +113,102 @@ public class RxJava extends AppCompatActivity {
         //StorIO설정
 
         //가장 먼저 StorIO에 대한 디펜던시를 설정해야 한다. 이전처럼 특별한 것은 없고 또 빌드 그레이드에 줄을 추가해주면 된다.
+
+        //또한 어노테이션 프로세서를 사용해 SQLite 데이터베이스와 인터페이스하는 코드를 더 빠르게 작성할 수 있도록 만든다
+
+        //StorIO구성
+        //StorIO에 데이터를 보존하기 위한 일반적인 리액티브 호출은 다음과 같다
+
+        /*StorIOSQLite storIOSQLite = ...;
+        Object entitiesToPersit;
+        storIOSQLite
+                .put()
+                .object(entitiesToPersit)
+                .prepare()
+                .asRxSingle()
+                .subscribe();
+
+        */
+
+        //하지만 이것을 사용하기 전에 몇 가지 알아두자
+
+        // 어떻게 SQL 데이터를 도메인 클래스에 매핑하는가?
+        // 어떻게 StorIOSQLite 인터페이스를 얻는가?
+
+        // 나중에 StorIOSQLite 인터페이스에 연결될 데이터 매핑부터 시작
+
+        // 상수
+        // 저장할 항목(StockUpdate)에 관련된 이름과 쿼리
+        class StockUpdateTable{
+            static final String TABLE = "stock_updates";
+
+            /*static*/ class Columns{ //static을 왜 쓰면 안되는건지 알아보기
+                static final String ID = "_id";
+                static final String STOCK_SYMBOL = "stock_symbol";
+                static final String PRICE = "price";
+                static final String DATE = "date";
+            }
+            private StockUpdateTable(){
+            }
+
+             /*static*/ String createTableQuery(){ //여기도 마찬가지 버전이 업데이트 되면서 바뀐건가? 책이랑 내용이 다름
+                return "CREATE TABLE" + TABLE + "("
+                        + Columns.ID + "INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        + Columns.STOCK_SYMBOL + "Text NOT NULL, "
+                        + Columns.DATE + "LONG NOT NULL, "
+                        + Columns.PRICE + "LONG NOT NULL"
+                        + ");";
+            }
+        }
+
+        //Columns 서브 클래스에는 나중에 데이터를 쿼리하고 업데이트하는 데 사용할 열 이름을 포함
+        //createTableQuery()와 같은 메소드는 첫 번째 애플리케이션 실행시 데이터베이스를 설정하는 데 사용된다.
+
+        //쓰기 리졸버 생성
+
+        // 5장에서는 데이터를 저장할 것이므로 항목에 대한 PutResolver 클래스를 작성하는 방법만 다룰 것이다. 자동으로 생성하는 것이 가능
+
+        //PutResolver가 여러 데이터베이스 테이블을 수정하는 경우 종종 필요하다.
+
+        //StockUpdatePutResolver라는 클래스를 만들다.
+
+        //DefaultPutResolver는 PutResolver 인터페이스를 상속하고 도메인 객체의 데이터를 SQL 데이터에 매핑하기 위한 편리한 인터페이스를 제공하는 추상 클래스다.
+
+        //StockUpdate 클래스에는 ID가 있다.
+
+        //편의상 SQLite에서 쉽게 이해할 수 있는 long 데이터 형식을 사용한다.
+
+        // 결국 getPrice()는 다음과 같이 나타난다.
+
+
+
     }
+
+    /*private static StorIOSQLite INSTANCE;
+
+    public synchronized static StorIOSQLite get(Context context){
+        if(INSTANCE != null){
+            return INSTANCE;
+        }
+        INSTANCE = DefaultStorIOSQLite.builder()
+                .sqliteOpenHelper(new StorIODbHelper(context))
+                .addTypeMapping(RxJava.class, SQLiteTypeMapping.
+                        <StockUpdate>builder()
+                .putResolver(new StockUpdatePutResolver())
+                .getResolver(createGetResolver())
+                .deleteResolver(createDeleteResolver))
+                .build())
+        .build();
+    }
+
+    private static Object createGetResolver() {
+    }*/
+
+
+
+
+
+
 
     /*@JvmOverloads
     public int OnCreate2(Bundle savedInstanceState){

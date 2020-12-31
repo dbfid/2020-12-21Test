@@ -2291,6 +2291,28 @@ val mutliplyBy2: (Int) -> Int = foo::double
 
 // double이 다른 패키지에 들어 있다면 이를 임포트해야한다.
 
+// import other.package.double 이걸 임포트 해줘야 하는데 import 걸어줄려고 했더니 import 쪽에서 에러가 난다.
 
+// val mutliplyBy2: (Int) -> Int = ::double
 
+// 반면에 클래스 이름을 붙이면 전혀 다른 타입의 함수가 생긴다.
 
+val mutliplyBy3: (MyClassStudy, Int) -> Int = MyClassStudy::double // { obj: MyClass, n: Int -> (obj::double)(n)}과 같다.
+
+// 이런 경우 multiplyBy2의 타입은 (Int) -> Int가 아니고 (MyclassStudy, Int) -> Int다. 클래스의 동반 객체에 정의된 함수라면(자바 정적 메서드와 비슷하다) 이를 임포트하거나 다음과 같은 구문으로 사용할 수 있다.
+
+class MyClassStudy2{
+    companion object{
+        fun double(n: Int): Int = n * 2
+    }
+}
+
+val mutliplyBy4: (Int) -> Int = (MyClassStudy2)::double
+
+// 여기서 (MyClassStudy2)::double 이 부분은 val mutliplyBy2: (Int) -> Int = MyClassStudy2.Companion::double 이걸 줄여 쓴 것
+
+// .Companion이나 괄호를 잊지 말기. 이걸 빼먹으면 전혀 다른 결과를 얻게 된다.
+
+// 컴파일러가 인스턴스 메서드 double을 찾을 수 없다.
+
+//

@@ -1,6 +1,8 @@
 package com.example.kotlintest32
 
 import android.graphics.Color
+import android.graphics.Color.RED
+import android.graphics.Color.YELLOW
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -16,7 +18,10 @@ import kotlin.reflect.full.memberProperties
 import com.example.kotlintest32.RxJava
 import java.io.File
 import java.lang.Character.getName
+import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
+
+import java.util.Random
 
 
 import kotlin.reflect.KMutableProperty
@@ -2316,3 +2321,277 @@ val mutliplyBy4: (Int) -> Int = (MyClassStudy2)::double
 // 컴파일러가 인스턴스 메서드 double을 찾을 수 없다.
 
 //
+
+data class Person(val name: String, // <- '데이터' 클래스
+                    val age: Int?=null) // <---- 널이 될 수 있는 타입(Int?)과 파라미터 디폴트 값
+
+fun main92(arge: Array<String>){ // <---- 최상위 함수
+    val persons = listOf(Person("영희"), Person("철수", age = 29)) //<---- 이름 붙은 파라미터
+
+    val oldset = persons.maxBy{it.age ?: 0}
+    println("나이가 가장 많은사람: $oldset") // <--- 문자열 템플릿
+}
+
+//결과: 나이가 가장 많은 사람: Person(name=철수, age=29) <---- toString 자동 생성
+
+// name과 age라는 프로퍼티property가 들어간 간단한 데이터 클래스data class를 정의한다 age 프로퍼티의 디폴트 값은 (따로 지정하지 않은 경우) null이다. 사람 리스트를 만들면서 영희의 나이를 지정하지 않았기 때문에 null이 대신 쓰인다. 리스트에서 가장 나이가 많은 사람을 찾기 위해 maxBy 함수를 사용한다. maxBy 함수에 전달한 람다 식(lambda expression)은 파라미터를 하나 받는다
+
+
+//상호운용성
+
+//상호운용성(interoperability)과 관련해 자바 프로그래머들이 던지는 첫 번째 질문은 아마도 "기존 라이브러리를 그대로 사용할 수 있나?"일 것이다.
+
+// 코틀린의 클래스나 메소드를 일반적인 자바 클래스나 메소드와 똑같이 사용할 수 있다. 이에 따라 자바와 코틀린 코드를 프로젝트에서 원하는 대로 섞어 쓸 수 있는 궁극적인 유연성을 발휘할 수 있다.
+
+// 기존 자바 프로젝트에 코틀린을 도입하는 경우 자바를 코틀린으로 변환하는 도구를 코드베이스 안에 있는 자바 클래스에 대해 실행해서 그 클래스를 코틀린 클래스로 변환할 수 있다.
+
+//기본 요소: 함수와 변수
+
+// 이번 절에서는 모든 프로그램을 구성하는 기본 단위인 함수와 변수를 살펴본다. 코틀린에서 타입 선언을 생략해도 된다는 사실을 보고, 코틀린이 어떻게 변경 가능한 데이터보다 변경할 수 없는 불변 데이터 사용을 장려하는지 배운다.
+
+// Hello.World!
+
+fun main94(args: Array<String>){
+    println("Hello, world!")
+}
+
+
+// 함수를 선언할 때 fun 키워드를 사용한다. 실제로도 코틀린 프로그래밍은 수많은 fun을 만드는 재미있는 fun 일이다!
+
+// 파라미터 이름 뒤에 그 파라미터의 타입을 쓴다. 나중에 보겠지만 변수를 선언할 때도 마찬가지 방식으로 타입을 지정한다.
+
+// 함수를 최상위 수준에 정의할 수 있다. (자바와 달리) 꼭 클래스 안에 함수를 넣어야 할 필요가 없다.
+
+// 배열도 일반적인 클래스와 마찬가지다. 코틀린에서는 자바와 달리 배열 처리를 위한 문법이 따로 존재하지 않는다.
+
+// System.out.pritln 대신에 println이라고 쓴다. 코틀린 표준 라이브러리는 여러 가지 표준 자바 라이브러리 함수를 간결하게 사용할 수 있게 감싼 래퍼wrapper를 제공한다. println도 그런 함수 중 하나다.
+
+// 최신 프로그래밍 언어 경향과 마찬가지로 줄 끝에 세미콜론(;)을 붙이지 않아도 좋다.
+
+// 함수
+
+// 아무런 값도 반환하지 않는 함수를 어떻게 선언하는지 방금 살펴봤다. 하지만 의미 있는 결과를 반환하는 함수의 경우 반환 값의 타입을 어디에 지정해야 할까? 파라미터 목록 뒤의 어디쯤에 반환 타입을 추가하면 되리라 추측할 수 있다.
+
+// 코틀린 REPL에서 한번 시험해보자
+
+fun max(a: Int, b: Int): Int{
+    return if(a > b) a else b
+    println(max(1, 2))
+}
+
+
+fun max2(a: Int, b: Int): Int{  // max2는 함수 이름
+    return if (a > b) a else b
+}
+
+// 식이 본문인 함수
+
+// 조금 전에 살펴본 함수를 더 간결하게 표현할 수도 있다. 핲의 함수 본문은 if 식 하나로만 이뤄져 있다. 이런 경우 다음과 같이 중괄호를 없애고 return을 제거하면서 등호(~)를 식 앞에 붙이면 더 간결하게 함수를 표현할 수 있다.
+
+fun max3(a: Int, b: Int) = if (a>b) a else b
+//여기서 반환 타입을 생략할 수 있는 이유는 무엇일까? 코틀린은 정적 타입 지정 언어이므로 컴파일 시점에 모든 식의 타입을 지정해야 하지 않는가? 실제로 모든 변수나 모든 식에는 타입이 있으며, 모든 함수는 반환 타입이 정해져야 한다. 하지만 식이 본문인 함수의 경우 굳이 사용자가 반환 타입을 적지 않아도 컴파일러가 함수 본문 식을 본석해서 식의 결과 타입을 함수 반환 타입으로 정해준다.
+
+// 이렇게 컴파일러가 타입을 분석해 프로그래머 대신 프로그램 구성 요소의 타입을 정해주는 기능을 타입 추론(type inference)이라 부른다.
+
+// 식이 본문인 함수의 반환 타입만 생략 가능하다는 점에 유의하라. 블록이 본문인 함수가 값을 반환한다면 반드시 반환 타입을 지정하고 return문을 사용해 반환 값을 명시해야 한다.
+
+// 변수
+
+// 자바에서는 변수를 선언할 때 타입이 맨 앞에 온다.
+
+// 코틀린에서는 타입 지정을 생략하는 경우가 흔하다. 타입으로 변수 선언을 시작하면 타입을 생략할 경우 식과 변수 선언을 구별할 수 없다.
+
+// 그런 이유로 코틀린에서는 키워드로 변수 선언을 시작하는 대신 변수 이름 뒤에 타입을 명시하거나 생략하게 허용한다. 변수를 몇 개 선언해보자.
+
+fun main95(args: Array<String>){
+    val question = "삶, 우주, 그리고 모든 것에 대한 궁극적인 질문"
+
+    val answer = 42
+
+    //이 예제에서는 타입 표기를 생략했지만 원한다면 타입을 명시해도 된다.
+
+    val answer2: Int = 42 // 이런 느낌으로
+}
+
+
+// 이 책의 두 저자는 젯브레인스의 코틀린 개발 팁에서 일한다. - 옮긴이
+
+// 식이 본문인 함수에서와 마찬가지로 여러분이 타입을 지정하지 않으면 컴파일러가 초기화 식을 분석해서 초기화 식의 타입을 변수 타입을 변수 타입으로 지정한다. 여기서 초기화 식은 42로 Int 타입이다. 따라서 변수도 Int 타입이 된다.
+
+// 부동소수점(floating point) 상수를 사용한다면 변수 타입은 Double이 된다.
+
+fun main96(args: Array<String>){
+    val answer: Int
+    answer = 42
+}
+
+// 초기화 식이 없다면 변수에 저장될 값에 대해 아무 정보가 없기 때문에 컴파일러가 타입을 추론할 수 없다. 따라서 그런 경우 타입을 반드시 지정해야 한다.
+
+// 변경 가능한 변수와 변경 불가능한 변수
+
+// 변수 선언 시 사용하는 키워드는 다음과 같은 2가지가 있다.
+
+// 더 쉽게 문자열 형식 지정: 문자열 템플릿
+
+// 이 절의 서두에 있는 'Hello, World!' 예제로 다시 돌아가자. 다음은 그 예제의 다음 단계로, 사람 이름을 사용해 환영 인사를 출력하는 코틀린 프로그램
+
+// 문자열 템플릿 사용
+
+fun main97(args: Array<String>){
+    val name = if (args.size > 0) args[0] else "Korlin"
+    println("Hello, $name!") // <---- "Bob"을 인자로 넘기면 "Hello, Bob!"을 출력하고 아무 인자도 없으면
+}
+
+// 이 예제는 문자열 템플릿(string template)이라는 기능을 보여준다. 이 코드는 name이라는 변수를 선언하고 그 다음 줄에 있는 문자열 리터럴 안에서 그 변수를 사용했다. 여러 스크립트 언어와 비슷하게 코틀린에서도 변수를 문자열 안에 사용할 수 있다. 문자열 리터럴의 필요한 곳에 변수를 넣되 변수 앞에 $를 추가해야 한다.
+
+// 이 문자열 템플릿은 자바의 문자열 접합 연산("Hello, " + name + "!")과 동일한 기능을 하지만 좀 더 간결하며, 자바 문자열 접합 연산을 사용한 식과 마찬가지로 효율적이다.
+
+// 한글을 문자열 템플릿에서 사용할 경우 주의할 점
+
+// 코틀린에서는 자바와 마찬가지로 한글(사실은 한글 뿐 아니라 '글자(letter)'로 분류할 수 있는 모든 유니코드 문자)을 식별자에 사용할 수 있으므로 변수 이름에 한글이 들어갈 수 있다. 그런 유니코드 변수 이름으로 인해 문자열 템플릿을 볼 때 오해가 생길 수 있다. 문자열 템플릿 안에$로 변수를 지정할 때 변수명 바로 뒤에 한글을 붙여서 사용하면 코틀린 컴파일러는
+
+
+// 커스텀 접근자
+
+// 프로퍼티의 접근자를 직접 장성하는 방법
+
+// 직사각형 클래스인 Rectangle을 정의하면서 자신이 정사각형인지 알려주는 기능을 만들어보자
+
+// 직사각형이 정사각형인지를 별도의 필드에 저장할 필요가 없다.
+
+// 사각형의 너비와 높이가 같은지 검사하면 정사각형 여부를 그때그때 알 수 있다.
+
+class Rectangle(val height: Int, val width: Int){
+    val isSquare: Boolean
+    get(){ //<----- 프로퍼티 게터 선언
+        return height == width
+    }
+}
+
+//isSquare 프로퍼티에는 자체 값을 저장하는 필드가 필요 없다. 이 프로퍼티에는 자체 구현을 제공하는 게터만 존재한다.
+
+//코틀린 소스코드 구조: 디렉터리와 패키지
+
+//자바의 경우 모든 클래스를 패키지 단위로 관리한다.
+
+//코틀린에도 자바와 비슷한 개념의 패키지가 있다. 모든 코틀린 파일의 맨 앞에 package문을 넣을 수 있다. 그러면 그 파일 안에 있는 모든 선언(클래스, 함수, 프로퍼티 등)이 해당 패키지에 들어간다. 같은 패키지에 속해 있다면 다른 파일에서 정의한 선언일지라도.
+
+//직접 사용할 수 있다. 반면 다른 패키지에 정의한 선언을 사용하려면 임포트를 통해 선언을 불러와야 한다. 자바와 마찬가지로 임포트문은 파일의 맨 앞에 와야 하며 import키워드를 사용한다.
+
+class Rectangle2(val height: Int, val width: Int){
+    val isSquare3: Boolean
+    get() = height == width
+}
+fun createRandomRectangle() : Rectangle2{
+    val random = Random()
+    return Rectangle2(random.nextInt(), random.nextInt())
+}
+
+//코틀린에서는 클래스 임포트와 함수 임포트에 차이가 없다, 모든 선언을 import 키워드로 가져올 수 있다. 최상위 함수는 그 이름을 써서 임포트할 수 있다.
+
+// 다른 패키지에 있는 함수 임포트하기
+
+//간단한 enum 클래스 정의하기
+
+enum class Color{
+    RED, ORANGE, TELLOW, GREEN, BLUE, INDIGO, VIOLET
+}
+
+// enum은 자바 선언보다 코틀린 선언에 더 많은 키워드를 써야 하는 흔치 않은 예다. 코틀린에서는 enum class를 사용하지만 자바에서는 enum을 사용한다. 코틀린에서 enum은 소프트 키워드(soft keyword)라 부르는 존재다. enum은 class 앞에 있을 때는 특별한 의미를 지니지만 다른 곳에서는 이름에 사용할 수 있다.
+
+// 반면 class는 키워드다. 따라서 class라는 이름을 사용할 수 없으므로 클래스를 표현하는 변수 등을 정의할 때는 clazz나 aClass와 같은 이름을 사용해야 한다.
+
+// 자바와 마찬가지로 enum은 단순히 값만 열겨하는 존재가 아니다. enum클래스 안에도 프로퍼티나 메소드를 정의할 수 있다. 다음은 프로퍼티와 메소드를 enum안에 선언하는 방법을 보여준다.
+
+enum class Color2(val r: Int, val g: Int, val b: Int){
+    RED(255,0,0), ORANGE(255,165,0),
+    YELLOW(255,255,0),GREEN(0,255,0),BLUE(0,0,255),
+    INDIGO(75,0,130),VIOLET(238,130,238);
+
+    fun rgb() = (r * 256 + g) * 256 + b
+}
+
+// 각 enum상수를 정의할 때는 그 상수에 해당하는 프로퍼티 값을 지정해야만 한다. 이 예제에서는 코틀린에서 유일하게 세미콜론(;)이 필수인 부분을 볼 수 있다. enum 클래스 안에 메소드를 정의하는 경우 반드시 enum 상수 목록과 메소드 정의 사이에
+
+// 세미콜론을 넣어야한다. 이제 enum 상수로 할 수 있는 멋진 일을 살펴보자.
+
+// when으로 enum 클래스 다루기
+
+//(그리고 그 연상 단어 정보를 enum안에 저장하지는 않는다고 하면). 자바라면 switch문으로 그런 함수를 작성할 수 있다.
+
+// switch에 해당하는 코틀린 구성 요소는 when이다.
+
+// if와 마찬가지로 when도 값을 만들어내는 식이다. 따라서 식이 본문인 함수에 when을 바로 사용할 수 있다.
+
+/*fun getMnemonic(color: Color) = when (color){
+    Color.RED -> "Richard"
+    Color2.ORANGE -> "Of"
+    Color.YELLOW -> "York"
+}*/
+
+// when을 사용해 올바른 enum 값 찾기
+
+// 한 whne 분기 안에 여러 값 사용하기
+
+// when과 임의의 객체를 함께 사용
+
+// 코틀린에서 when은 자바의 switch보다 훨씬 더 강력하다. 분기 조건에 상수(enum 상수나 숫자 리터럴)만을 사용할 수 잇는 자바
+
+// 인자가 없는 when
+
+// 식을 표현하는 클래스 계층
+
+interface Expt
+
+class Num(val value: Int) : Expt // <---- value라는 프로퍼티만 존재하는 단순한 클래스로 Expr 인터페이스를 구현한다.
+class Sum(val left: Expt, val right: Expt) : Expt // <---- Expr 타입의 객체라면 어떤 것이나 Sum 연산의 인자가 될 수 있다. 따라서 Num이나 다른 Sum이 인자로 올 수 있다.
+
+// if 연쇄를 사용해 식을 계산하기
+
+fun eval(e: Expt): Int{
+    if(e is Num){
+        val n = e as Num
+        return n.value
+    }
+    if(e is Sum){
+        return eval(e.right) + eval(e.left)
+    }
+    throw IllegalArgumentException("Unknown expression")
+}
+
+// if와 when의 분기에서 블록 사용
+
+// if나 when 모두 분기에 블록을 사용할 수 있다. 그런 경우 블록의 마지막 문장이 블록 전체의 결과가 된다. 예제로 봤던 eval 함수에 로그를 추가하고 싶다면 각 분기를 블록으로 만들고 블록의 맨 마지막에 그 분기의 결과 값을 위치시키면 된다.
+
+// 분기에 복잡한 동작이 들어가 있는 when 사용하기
+
+fun evalWithLogging(e: Expt): Int =
+    when (e){
+        is Num -> {
+            println("num: ${e.value}")
+            e.value
+        }
+        is Sum -> {
+            val left = evalWithLogging(e.left)
+            val right = evalWithLogging(e.right)
+            println("sum: $left + $right")
+            left + right
+        }
+        else -> throw IllegalArgumentException("Unknown expression")
+    }
+
+// when을 사용해 피즈버즈 게임 구현하기
+fun fizzBuzz(i: Int) = when{
+    i % 15 == 0 -> "FizzBuzz"
+    i % 3 == 0 -> "Fizz"
+    i % 5 == 0 -> "Buzz"
+    else -> "$i"
+}
+
+// 증가 값을 갖고 범위 이터레이션하기
+fun main99(args: Array<String>){
+    for (i in 100 downTo 1 step 2){
+        print(fizzBuzz(i))
+    }
+}
+

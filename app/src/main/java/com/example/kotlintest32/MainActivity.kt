@@ -1,11 +1,10 @@
 package com.example.kotlintest32
 
-import android.graphics.Color
-import android.graphics.Color.RED
 import android.graphics.Color.YELLOW
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.View.X
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -20,8 +19,10 @@ import java.io.File
 import java.lang.Character.getName
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
+import java.math.BigInteger
 
 import java.util.Random
+import kotlin.math.cos
 
 
 import kotlin.reflect.KMutableProperty
@@ -2190,12 +2191,12 @@ addAll(la, ls)
 
 // 데이터를 함수로 이해하기
 
-fun append(i: Int, list: MutableList<Int>): List<Int>{
+/*fun append(i: Int, list: MutableList<Int>): List<Int>{
     list.add(i)
     return list
 }
 
-fun append2(i: Int, list: List<Int>) = list + i
+fun append2(i: Int, list: List<Int>) = list + i*/
 
 //하지만 실제로는 그렇지 않다. list + i라는 식은 list의 모든 원소가 같은 순서로 있고 맨 뒤에 i가 더 들어 있는 새로운 (불변)리스트를 만들어낸다. 아무것도 변이된 것이 없다. 따라서 append2는 순수 함수다.
 
@@ -2320,7 +2321,11 @@ val mutliplyBy4: (Int) -> Int = (MyClassStudy2)::double
 
 // 컴파일러가 인스턴스 메서드 double을 찾을 수 없다.
 
-//
+// 함수 합성
+
+// fun 함수는 쉽게 합성할 수 있다.
+
+
 
 data class Person(val name: String, // <- '데이터' 클래스
                     val age: Int?=null) // <---- 널이 될 수 있는 타입(Int?)과 파라미터 디폴트 값
@@ -2594,4 +2599,504 @@ fun main99(args: Array<String>){
         print(fizzBuzz(i))
     }
 }
+
+// compos 함수는 (Int) -> Int  타입의 함수 두 개를 파라미터로 밭아 똑같은 타입의 함수를 반환한다. compose 함수를 fun으로 정의할 수 있지만 함수의 파라미터는 값이어야만 한다.
+
+// fun으로 정의한 myFunc라는 함수가 있으면 앞에 ::를 붙여서 함수 값으로 변환할 수 있다.
+
+// 함수 재사용하기
+
+// 함수를 쉽게 재사용하려면 타입 파라미터를 사용하는 다형적(polymorphic) 함수로 만들면 된다.
+
+// Int를 인자로 받고 Int에서 Int로 가는 함수를 반환한다. 따라서 이 함수의 타입은 (Int) -> (Int) -> Int다.
+
+fun main100(args: Array<String>){
+    val add: (Int) -> (Int) -> Int = {a -> {b -> a + b}}
+
+    //타입 이름을 짧게 하고 싶으면 타입 별명(type alias)을 사용하라.
+
+    val add2: IntBinOp = { a -> { b -> a + b}}
+    val mult: IntBinOp = { a -> { b -> a * b }}
+}
+
+typealias IntBinOp = (Int) -> (Int) -> Int
+
+//커리한 함수 적용하기
+
+//커리한 함수의 타입과 구현 방법
+
+// 일반적인 다른 함수와 똑같이 적용 가능
+
+// 커리한 함수에 첫 번째 인자를 적용한 다음.
+
+// 다시 두 번째 인자를 적용용
+
+// 코틀린이 다형적 프로퍼티를 제공하지 않기 때문에 문제가 생긴다.
+
+// 코틀린에서는 다형적 클래스, 인터페이스, 함수를 정의할 수 있다. 하지만 다형적 프로퍼티는 정의할 수 없다. 따라서 프로퍼티가 아니라 함수, 클래스, 인터페이스, fun으로 정의한 함수에만 타입 파라미터를 정의할 수 있다.
+
+// 따라서 다형적 프로퍼티를 정의하려면 요소 안에 정의를 넣어야 한다. 가장 실용적인 요소는 fun이다.
+
+fun <T, U, V> higherCompose(): ((U) -> V) -> ((T) -> U) -> (T) -> V =
+        { f ->
+            { g ->
+                {
+                    x -> f(g(x))
+                }
+            }
+        }
+
+// higherCompose()라는 fun 함수는 아무 파라미터도 받지 않고 항상 같은 값을 반환한다. 따라서 이 함수는 상수다. 이 함수를 fun으로 정의했다는 사실은 이 함수가 상수라는 관점과는 무관하다. 이 함수는 함수를 합성하는 함수가 아니다.
+
+// 단지 함수를 합성하는 함수 값을 반환하는 fun 함수일 뿐 이다. 반환 타입을 생략하는 쪽을 선호한다면 파라미터의 타입을 지정해야 한다.
+
+fun <T,U,V> higherCompose2() =
+        { f: (U) -> V ->
+            { g: (T) -> U ->
+                {
+                    x: T -> f(g(x))
+                }
+            }
+        }
+
+// 함수를 합성하되 적용 순서가 반대인
+
+// HOF(고차 함수)를 사용하는 경우에도 똑같이 이런 방식을 적용할 수 있다.
+
+/*
+fun main101(args: Array<String>){
+    val cos = higherCompose<Double, Double, Double>()
+    ({ x:Double -> Math.PI / 2 - x})(Math::sin)
+
+    val cosValue = cos(2.0)
+}*/
+
+// 타입 추론하기
+
+// 익명 함수를 사용할 때 문제가 될 수 있는 다른 요소로 타입 추론이 있다. 앞 예제에서는 compose함수가 두 익명 함수를 인자로 받는다는 사실을 알고 컴파일러가 두 익명 함수의 타입을 추론할 수 있었다.
+
+/*fun cos(arg: Double)=
+        compose({x: Double -> Math.PI / 2 - x},
+                {x: Double -> Math.sin(x)})(arg)
+        */
+
+//로컬 함수 정의하기
+
+// 클로저 구현하기
+
+// 코틀린 람다에는 자바 람다와 같은 제약이 없다.
+
+// 오직 동작상 파이널(effectively final)인 참조에만 접근할 수 있는 자바 람다와 달리 코틀린 람다는 자신을 둘러싸고 있는 영역에 있는 가변 변수에 자유롭게 접근할 수 있다.
+
+fun main101(args: Array<String>){
+    val taxRate = 0.09
+    fun addTax(price: Double) = price + price * taxRate
+}
+
+fun main102(args: Array<String>){
+    val taxRate = 0.09
+    fun addTax(taxRate: Double, price: Double) = price + price * taxRate
+
+    println(addTax(taxRate, 12.0))
+}
+
+fun main103(args: Array<String>){
+    val taxRate = 0.09
+
+    val addTax = {taxRate: Double, price: Double -> price + price * taxRate }
+
+    println(addTax(taxRate, 12.0))
+}
+
+// 자바와 달리 코틀린에서는 세 개 이상의 인자를 받는 함수도 만들 수 있다. 자바에서는 인자가 하나인 경우 Function 인터페이스를,
+
+// 커리한 함수는 인자가 하나뿐이며 인자가 하나뿐인 다른 함수를 반환하는 함수다.
+
+fun main104(args: Array<String>){
+    val taxRate = 0.09
+
+    val addTax = { taxRate: Double ->
+        { price: Double ->
+            price + price * taxRate
+        }
+    }
+    println(addTax(taxRate)(12.0))
+}
+
+// fun 함수를 커리한 버전은 의미가 거의 없다. addTax에서 첫 번째 함수는 fun을 사용해 정의할 수 있지만. 반환하는 함수는 반드시 함수 값을 사용해야 한다. fun 함수는 값이 아니기 때문에 반환 할 수가 없다.
+
+// 함수 부분 적용과 자동 커링
+
+// 클로저 버전과 커리한 함수 버전은 같은 결과를 내놓기 때문에 동등한 것으로 보인다. 하지만 실제로 이 둘은 의미상 다르다. 앞에서 이야기했지만 addTax 함수의 두 파라미터는 환전히 다른 역할을 한다.
+
+// 세율인 taxRate는 자주 바뀌지 않지만. 가격인 price는 매번 함수를 호출 할 때마다 달라진다.
+
+class TaxComputer(private val rate: Double){
+    fun compute(price: Double): Double = price * rate + price
+}
+
+fun<A,B,C> parialB(b: B, f: (A) -> (B) -> C): (A) -> (B) -> C =
+        {a:A ->
+            f(a)
+        }
+
+// f(a)는 B에서 C로 가는 함수를 만든다. C 타입이 필요하고, f(a)와 B 타입의 값을 가지고 있다. 따라서 다시 이 함수에 B 타입의 값을 적용해야 한다.
+
+fun<A,B,C> parialB2(b: B, f: (A) -> (B) -> C): (A) -> C ={
+    a : A ->
+    f(a)(b)
+}
+
+fun<T,U,V>swapArgs(f: (T) -> (U) -> V): (U) -> (T) -> (V) ={
+    u-> { t -> f(t)(u)}
+}
+
+// 이 함수가 있으면 두 인자 중 아무것이나 부분 적용할 수 있다. 예를 들어 이자율과 원금을 받아서 매달 납입해야 하는 금액을 계산하는 함수가 있다고 하면
+
+// 항등 함수 정의하기
+
+// 지금까지 함수를데이터처럼 취급할 수 있음을 살펴봤다. 함수를 다른 함수의 인자로 넘기거나 함수가 함수를 반환하거나, 정수나 문자열에 대해 연산을 적용하는 것처럼 함수에도 연산을 적용 할 수 있다.
+
+// 중립 원소(neutral element)는 덧셈의 0이나 곱셈의 1, 문자열 연결 연산의 빈 문자 열과 같은 역할을 하는 원소를 뜻한다.
+
+// 중립 원소는 주어진 연산에 대해서만 정의된다. 정수 덧셈에서 1은 중립 원소가 아니다.
+
+// 곱셈에서 0은 더더욱 중립 원소가 아니다. 여기서는 함수 합섬의 중립 원소에 대해 이야기하려 한다. 이 특별한 함수는 인자를 그대로 돌려준다.
+
+// 항등(identity)함수라고 한다.
+
+// 더 나아가 정수 곱셈이나 문자열 연결 등의 연산에서는 항등원(identity element)이라는 용어를 중립 원소 대신 사용한다. 코틀린에서는
+
+// 올바른 타입 사용하기
+
+// 앞에서 Int, Double, String과 같은 표준 타입을 사용해 가격이나 세율과 같은 비즈니스 요소를 표현했다. 프로그래밍에서 이런 식의 접근이 흔한 일이지만, 이런 식으로 너무 흔히 쓰는 타입을 사용하면 문제가 생길 수 있다. 앞에서 말한 것처럼 이름보다는 타입을 신뢰해야 한다. 어떤 Double값을 'price'라고 부른다고 해서 그 값이 가격이 되는 것은 아니다.
+
+data class Product(val name: String, val price: Double, val weight: Double)
+
+data class OrderLine(val product: Product, val count: Int){
+    fun weight() = product.weight  * count
+    fun amount() = product.price * count
+}
+
+object Store { // ------ 스토어는 싱글턴 객체다.
+    @JvmStatic // ----- @JvmStatic 애너테이션을 사용하면 자바에서 이 함수를 마치 정적 메서드처럼 호출할 수 있다.
+    fun main(args: Array<String>){
+        val toothPaste = Product("Tooth paste", 1.5, 0.5)
+        val toothBrush = Product("Tooth brush", 3.5, 0.3)
+        val orderLines = listOf(
+                OrderLine(toothPaste, 2),
+                OrderLine(toothBrush, 3)
+        )
+        val weight = orderLines.sumByDouble { it.amount() }
+        val price = orderLines.sumByDouble { it.weight() }
+        println("Total price: $price")
+        println("Total weight: $weight")
+    }
+}
+
+// 모델링을 배운 독자라면 '클래스 하나에는타입이 같은 프로퍼티가 여럿 들어가서는 안 된다'라는 오래된 규칙을 기억할 것이다.
+
+// 클래스 안에는 특정 타입의 프로퍼티가 하나만 있고 관계 차수(cardinality)만 달라야 한다. 여기서 이 말은 Product 안에는 Double 타입의 프로퍼티가 있고 그 프로퍼티의 관계 차수가 2여야 한다는 뜻이다 이런 식의 접근이 본문에서 다뤘던 문제를 해결하는 올바른 방법은 아니지만 규칙 자체는 기억해둘 만한 가치가 있다.
+
+// 무게 단위의 수량이다 절대로 킬로그램과 원을 서로 더하는 상황이 생겨서는 안 된다.
+
+// 값 타입 정의하기
+
+// 이런 문제를 피하려면 값 타입을 사용해야만 한다.
+
+data class Price(val value: Double){
+    operator fun plus(price: Price) = Price(this. value + price.value)
+
+    operator fun times(num: Int) = Price(this.value * num)
+}
+
+// OrderLine은 바꿀 필요가 없다.
+
+data class Price2 private constructor (private val value: Double){
+    override fun toString() = value.toString()
+    operator fun plus(price: Price2) = Price2(this.value + price.value)
+    operator fun times(num: Int) = Price(this.value * num)
+
+    companion object{
+        val identity = Price2(0.0)
+        operator fun invoke(value: Double)=
+                if(value > 0)
+                    Price2(value)
+                else
+                    throw IllegalArgumentException("Price must be positive or null")
+    }
+}
+
+/*fun toString(list: List<Char>, s: String): String =
+        if (list.isEmpty())
+            s
+        else
+            toString(list.subList(1, list.size), append(s, list[0]))*/
+
+
+// list[0]이 리스트의 첫 번째 원소를 반환한다는 점을 기억하라. 이런 연산을 일반적으로 head라는 이름으로 알려져 있다. 그리고 list.subList(1, list.size)는 리스트의 첫 원소를 제외한 나머지 부분을 돌려주는 tail이라는 이름의 함수에 해당한다. 이 두 연산을 추상화해 별도 함수로 만들 수 있다. 하지만 이런 함수를 만들 때는 빈 리스트를 처리해야 한다. 여기서는 if ... else 식에 의해 걸러지기 때문에 빈 리스트인 경우가 발생하지 않는다.
+
+// 재귀 단계를 저장하는 데 필요한 메모리는 제약이 아주 심한 경우가 흔하고, 이 때문에 메모리가 부족하기 쉽다. 이 문제를 피하려면 재귀 대신 공재귀를 사용하는 것이 최선
+
+// 재귀와 공재귀의 차이를
+
+// 스택에 얼마나 많은 계산 단계를 넣을 수 있느냐는 언어나 설정에 따라 달라진다.
+
+// 코틀린에서는 약 20,000단계를 스택에 넣을 수 있고, 자바에서는 3,000단계를 넣을 수 있다. 모든 스레드가 같은 크기의 스택을 사용하므로 (다만, 각 스레드가 사용하는 스택 영역은 서로 다르다) 스택 크기를 더 크게 설정하는 것은 좋은 생각이 아니다. 재귀적이지 않은 처리 과정은 스택을 아주 적게 사용해서 스택 크기를 크게 잡으면 메모리가 낭비되는 경우가 자주 있다.
+
+// 꼬리 호출 제거
+
+// 공재귀도 아주 느리기는 하지만 스택을 고갈시킬 것처럼 보인다. 하지만 이 문제를 완전히 없애는 방법이 있다.
+
+/*fun toString(list2: List<Char>): String{
+    fun toString(list2: List<Char>, s: String): String =
+            if(list2.isEmpty())
+                s
+            else
+                toString(list2.subList(1, list2.size), append(s, list2[0]))
+    return toString(list2, "")
+}*/
+
+// 단지 이를 다음과 같이 명령형 루프와 가변 참조로 바꿔 쓰면 된다.
+
+// 꼬리 호출 제거 사용하기
+
+/*
+fun toString(list: List<Char>): String{
+    fun append(s: String, c: Char): String {
+
+    }
+
+    tailrec fun toString(list: List<Char>, s: String): String =
+        if (list.isEmpty())
+            s
+        else
+            toString(list.subList(1, list.size), append(s, list[0]))
+    return toString(list, "")
+
+}*/
+
+// 루프를 공재귀로 변환하기
+
+// 루프 대신 공재귀를 사용하는 것은 패러다임의 전환(paradigm shift)이다. 먼저 원래의 패러다임 아래서 생각하고, 그 결과를 새로운 패러다입으로 옮긴다. 모든 배움에는 이런 과정이 필요하며 루프 대신 공재귀를 사용하는 법을 배우는것도 다르지 않다.
+
+fun sum(n: Int): Int = if (n < 1) 0 else n + sum(n - 1) // -> 재귀 버전인 sum(n)이 1부터 n까지의 합계를 뜻한다고 가정하면 다음과 같이 작성 가능
+
+// 명령형 프로그래밍에서 for나 while 루프라고 부르는 제어 구조를 사용해 언어와 관계없이 구현할 수 있다.
+
+// 코틀린에는 for 루프가 없으므로 (적어도 이 흐름도에 해당하는 전통적인 for 루프는 없다)while루프를 사용한다.
+
+fun sum2(n: Int): Int{
+    var s = 0
+    var i = 0
+    while (i <= n){
+        s += i
+        i += 1
+    }
+    return s
+}
+
+// 첫 번째 파라미터 n은 절대 바뀌지 않는다. 코틀린 로컬 함수를 사용해 도우미 함수를 주 함수에 포함시키면 도우미 함수가 이 파라미터에 대해 닫혀 있게 만들어서 파라미터를 하나 줄일 수 있다.
+
+/*fun sum10(n: Int): Int{
+    fun sum10(s: Int, i: Int): Int=
+            return sum10(0, n)
+}*/
+
+// 아무튼 이런 느낌으로 쓰면 된다.
+
+fun sum11(n: Int): Int{
+    fun sum11(s: Int, i: Int): Int = if(i>n) s else sum11(s + i, i + 1)
+    return sum11(0, n)
+}
+
+//여기서 코틀린에게 도우미 함수에 TCE를 적용한다고 알리는 것뿐이다. tailrec키워드를 함수 앞에 붙이면 된다.
+
+fun sum12(n: Int): Int{
+    tailrec fun sum12(s: Int, i: Int): Int =
+        if(i>n) s else sum12(s + i, i + 1)
+        return sum12(0,n)
+}
+
+//TCE를 적용할 수 없으면 코틀린이 다음과 비슷한 경고를 표시한다.
+
+// 공재귀 버전을 바로 작성할 수 있어야 한다. 그렇지 않다면 루프 구현을 작성한 다음에 이를 sum 함수에서 했던 방식을 사용해 공재귀 함수로 바꿔라
+
+// 두 수 x, y를 더하려면 다음과 같이 한다.
+
+// y = 0이면 X를 반환한다.
+
+// 그렇지 않다면 X에 1을 더하고 y에서 1을 뺀 다음, 처음부터 다시 시작한다.
+
+// 루프로 이 과정을 작성하면 다음과 같다.
+
+/*fun add13(a: Int, b: Int): Int{
+    var x = a
+    var y = b
+    while(y != 0){
+        x = inc(x)
+        y = dec(y)
+    }
+    return x
+}
+
+fun dec(y: Int): Int {
+
+}
+
+fun inc(x: Int): Int {
+
+}*/
+
+// 자바와 달리 코틀린에서는 함수파라미터가 val 변수이기 때문에 파라미터 x, y를 바로 사용할 수가 없다.
+
+// 그러므로 할 수 없이 복사본을 만들어야 한다. 이제 여러분은 파라미터와 복사본 변수를
+
+// 모든 add 함수에 대한 호출로 바꾸기만 하면 된다.
+
+/*
+tailrec fun add(x: Int, y: Int): Int = if (y == 0) x else add(inc(x), dec(y))*/
+
+// 꼬리 재귀 함수에 어떤 값을 넣어도 StackOverflowException이 발생하지 않는다. 앞으로 보겠지만 안전한 프로그램을 작성하는 일은 종종 (꼬리 호출이 아닌) 재귀 함수 구현을 꼬리 재귀 구현으로 바꾸는 일을 포함한다.
+
+// 재귀 함수 값 사용하기
+
+// 앞 절에서 본 것처럼 재귀 함수를 정의하기는 쉽다. 때로는 가장 단순한 구현이 꼬리 재귀인 경우도 있다. 하지만 이 예제는 실제 예제가 아니다. 아무도 덧셈을 수행하려고 이런 함수를 만들지는 않는다. 좀 더 유용한 예제를 시도해 보자. 계승 함수인
+
+// 계승 함수인 factoral(n: Int)는 인자가 0이면 1을
+
+// 그렇지 않으면 n * factorial(n-1)을 반환한다.
+
+fun factorial(n: Int): Int = if (n == 0) 1 else n * factorial(n - 1)
+
+// 재귀적 계승 함수 값 함수 값은 val 키워드로 정의된 함수라는 점을 기억
+
+// 함수 참조는 하면 안된다.
+
+
+// 함수가 자기 자신을 호출할 때 호출이 가능하게 하려면 함수가 이미 정의되어 있어야 한다. 따라서 이는 재귀 함수를 정의하기도 전에 이미 그 함수가 정의되어 있어야 한다는 뜻이다!
+
+// 인자가 하나밖에 없는 fun 함수를 함수 값으로 바꾸는 일은 아주 단순하다. fun 함수와 같은 구현의 람다를 사용하면 된다.
+
+/*fun main105(args: Array<String>){
+    val factorial: (Int) -> Int =
+            {
+                n -> if (n <= 1) n else n * factorial(n - 1)
+            }
+    val x: Int = X + 1
+}
+
+// 이 문제는 변수를 먼저 정의하고 그 값을 나중에 변경하는 식으로 해결할 수 있다. 다음과 같은 초기화를 사용하면 된다.
+fun main106(args: Array<String>){
+    lateinit var x: Int
+    init{
+        x = x + 1
+    }
+}*/
+
+object Factorial {
+    private lateinit var fact: (Int) -> Int
+    init{
+        fact = {n -> if (n <= 1) n else n * fact(n - 1)}
+    }
+    val factorial = fact
+}
+
+// by lazy를 사용하는 방법도 있다.
+
+object Factorial2{
+    val factorial: (Int) -> Int by lazy {{
+        n: Int ->
+        if (n <= 1) n else n * factorial(n - 1)
+    }}
+}
+
+// 중괄호를 두 번 연속으로 사용해야 한다! 지연 초기화가 다음과 같이 이뤄지기 때문
+
+/*
+object Factorial3{
+    val factorial3: (Int) -> Int by lazy {n: Int -> if (n <= 1) n else n * factorial3(n - 1)}
+} 일단 책에서 하라는데로 한건데 잘 안되는거 보면 내가 잘못했거나 책에서 하는 방법이 잘못되었거나 안드로이드 jvm 업그레이드 진행을 한다던가 여라기지 이이유로 이제 적용이 안되는 경우일 수도 있다.
+*/
+
+fun factorial(n: BigInteger): BigInteger =
+        if(n == BigInteger.ZERO)
+            BigInteger.valueOf(1) // valueOf를 보여주고자 일부러 사용
+        else
+            n* factorial(n - BigInteger.ONE)
+
+
+// 재귀 함수와 리스트
+
+// 리스트를 처리할 때 재귀와 꼬리 재귀를 사용하는 경우가 많다. 이런 처리 과정에서 일반저긍로 리스트를 첫 번째 원소와 첫 번째 원소를 제외한 리스트의 나머지 두 부분으로 나눠서 처리한다.
+
+fun sum(list: List<Int>): Int =
+        if (list.isEmpty()) 0 else list [0] + sum(list.drop(1))
+
+// 리스트가 비어 있으면 이 함수는 0을 반환한다. 비어 있지 않다면 첫 번째 원소를 제외한 리스트(꼬리)에 sum을 적용한 결과를 첫 번째 원소(머리)와 더한다. 리스트의 머리와 꼬리르 돌려주는 도우미 함수를 정의하면 이 논리를 더 명확히 볼 수 있다.
+
+fun <T> head(list: List<T>): T =
+        if (list.isEmpty())
+            throw IllegalArgumentException("head called on empty list")
+        else
+            list [0]
+fun <T> tail(list: List<T>): List<T> =
+        if (list.isEmpty())
+            throw IllegalArgumentException("tail called on empty list")
+        else
+            list.drop(1)
+
+fun sum7(list: List<Int>): Int =
+        if (list.isEmpty())
+            0
+        else
+            head(list) + sum7(tail(list))
+
+fun <T> List<T>.head2(): T =
+        if(this.isEmpty())
+            throw IllegalArgumentException("head called on empty list")
+        else
+            this[0]
+
+fun <T> List<T>.tail2(): List<T> =
+        if (this.isEmpty())
+            throw IllegalArgumentException("tail called on empty list")
+        else
+            this.drop(1)
+
+fun sum8(list: List<Int>): Int =
+        if(list.isEmpty())
+            0
+        else
+            list.head2() + sum(list.tail2())
+
+// 이 코드에서 sum 함수에 대한 재귀 호출은 sum 함수가 처리하는 마지막 연산이 아니다. 이 함수가 마지막에 하는 일은 네 가지다.
+
+// head 함수를 호출한다.
+
+// tail 함수를 호출한다
+
+// tail의 결과를 인자로 sum 함수를 호출한다.
+
+// head와 sum의 결과를 더한다.
+
+// 이 함수는 꼬리 재귀가 아니다. 따라서 tailrec 키워드를 붙일 수 없고, 리스트 인자가 몇천개 이상이면 이 함수를 사용할 수 없다.
+
+// 하지만 이 함수를 고쳐 써서 sum에 대한 재귀 호출을 꼬리 재귀 위치에서 하게 만들 수 있다.
+
+fun sum9(list: List<Int>): Int{
+    tailrec fun sumTail(list: List<Int>, acc: Int): Int =
+            if (list.isEmpty())
+                acc
+            else
+                sumTail(list.tail2(), acc + list.head2())
+    return sumTail(list, 0)
+}
+
+//여기서 sumTail 도우미 함수는 꼬리 재귀 함수다. TCE를 통해 최적화가 가능하다. 이 도우미 함수를 외부에서 사용하는 일은 절대 없으므로 sum 함수 내부에 정의했다.
+
+// 도우미 함수와 주 함수를 나란히 정의할 수도 있다. 하지만 그렇게 하면 도우미 함수를 private나 internal로 제한하고 주 함수를 공개해야 한다. 이런 경우 주 함수에서 도우미 함수를 호출하는 부분이 클로저가 된다. 도우미 함수를 주 함수에 내포시키는 쪽을 더 선호하는 이유는 이름 충돌을 피하고 주 함수의 파라미터 중 일부를 클로저를 사용해 공유하기 때문
+
+
+// 이중 재귀 함수
 

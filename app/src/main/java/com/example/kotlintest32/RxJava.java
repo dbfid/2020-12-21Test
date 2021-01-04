@@ -5,17 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
 import com.pushtorefresh.storio.sqlite.StorIOSQLite;
 import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
+import com.pushtorefresh.storio.sqlite.operations.get.DefaultGetResolver;
 import com.pushtorefresh.storio.sqlite.operations.put.DefaultPutResolver;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Flow;
@@ -179,6 +183,25 @@ public class RxJava extends AppCompatActivity {
         //편의상 SQLite에서 쉽게 이해할 수 있는 long 데이터 형식을 사용한다.
 
         // 결국 getPrice()는 다음과 같이 나타난다.
+
+
+        // 액티비티의 생명 주기와 매우 유사하지만, 다음과 같은 몇 가지 새로운 메소드가 있다.
+
+        // onAttach()
+
+        // onCreateView()
+
+        // onActivityCreated()
+
+        // onDestroyView()
+
+        // onDetach()
+
+        // 프래그먼트의 사용을 깊숙이 다루는 것은 이 책의 범위를 벗어나지만, 액티비티에 적용되는 누수에 대한 같은 규칙이 프래그먼트에도 적용된다는 점을 기억
+
+        // 리소스 누수
+
+        // 메모리 누수
 
 
 
@@ -457,8 +480,76 @@ public class RxJava extends AppCompatActivity {
         String stringValue();
     }
 
+    // 리졸버 얻기
+
+    // Stock Update 항목 읽기 메커니즘을 통합할 것이다.
+
+    // 마지막으로 우리는 원격 데이터 가져오기에 실패했음을 사용자에게 알리고 데이터를 가져올 수 있는 로컬 수단으로 처리해야 한다.
+
+    // 커서 열 읽기
 
 
+    // 데이터 변환
+
+    // 데이터베이스에 올바르게 저장하기 위해 Date와 BigDecimal 유형을 인코딩해야 했으므로,이제 디코딩을 해야 한다.
+
+    private Date getDate(long dateLong){
+        return new Date(dateLong);
+    }
+    // 위 코드는 Long 형식의 밀리초를 java.utill.Date 형식으로 간단하게 변환한다.
+
+    private BigDecimal getPrice(long priceLong){
+        return new BigDecimal(priceLong).scaleByPowerOfTen(-4);
+    }
+
+    // Long 형식을 취해 BigDecimal로 변환한다. 그러나 소수점 네 자리까지 값을 조정했으므로 이제 역순으로 처리해야 한다.
+
+    // StockUpdate 객체 생성
+
+    // 끝으로 모든 데이터를 사용할 준비가 됐으므로, 적절한 값을 사용해 생성자를 호출하고 StockUpdate 객체를 만들 수 있다.
+
+   // 유형 매핑 구성
+
+    // GetResolver를 사용하기 전에 해야 할 마지막 단계는 유형 매핑 구성에 추가하는 것이다.
+
+  // 여기서 스텁 인터페이스를 만드는 데 사용한 다음 줄을 찾아야 한다.
+
+    // StockUpdate 항목에 대한 오프라인 대체
+
+    // 이제 오프라인으로 보기 위해 데이터베이스에서 StockUpdate 항목을
+
+    //StorIO 데이터베이스 쿼리
+
+    // 다음 줄은 반환될 객체 유형을 지정한다
+
+
+    // 완성된 onExceptionResumeNext() 블록
+
+    // 사용자에게 오류에 대해 알리기
+
+    // 원격의 주식 데이터를 읽을 수 없을 때 알림을 처리하는 방법에 대해서도 간랸하게 알아보자.
+
+    // 누락된 삭제 리졸버
+
+    // StockUpdate 객체용 StorIO 구성을 완료해 CRUD(생성, 읽기, 수정, 삭제)의 네 가지 작업을 모두 지원한다.
+
+    // 생명 주기검토
+
+    // 안드로이드 액티비티 생명 주기는 특별한 메소드가 호출되는 순서와 조건을 보여준다.
+
+    //onCreate()
+
+    //onStart()
+
+    //onResume()
+
+    //onPause()
+
+    //onStop()
+
+    //onDestroy()
+
+    //개발자는 액티비티를 특정 생명 주기에서 호출할 수 있도록 코드를 재정의(override)해야 한다.
 }
 //위의 소스를 보면 람다 함수 내에서 closureTest() 함수의 변수에 접근하는 경우와 그렇지 않은 경우의 차이가 명확하게 보입니다. 내부적으로 closureTest() 함수의 변수까지 포함된 객체를 만들어 반환하므로 함수가 종료되더라도 closureTest() 함수의 변수를 그대로 이용할 수 있습니다.
 
@@ -483,7 +574,7 @@ public class RxJava extends AppCompatActivity {
 
 // 메모리 내부 데이터
 
-final class Person {
+/*final class Person {
     private final String name;
     private final Instant registered;
 
@@ -512,6 +603,7 @@ final class Person {
         return Objects.equals(name, person.name) && Objects.equals(registered, person.registered);
 
     }
+}*/
 
     /*Observable<Integer> source =
             Observable.create((ObservableEmitter<Integer> emitter) -> {
@@ -594,7 +686,7 @@ final class Person {
     //오래된 옵저버블을 플로어블로 변환하는 과정은 매우 유사하다.
 
 
-}
+
 
 
 
